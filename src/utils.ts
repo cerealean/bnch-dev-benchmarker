@@ -1,4 +1,4 @@
-import { BenchmarkSample, BenchmarkStats } from "./types.js";
+import { BenchmarkSample, BenchmarkStats } from './types.js';
 
 /**
  * Calculate statistical summary from benchmark samples
@@ -58,7 +58,7 @@ export function sleep(ms: number): Promise<void> {
  */
 export function yieldControl(): Promise<void> {
   return new Promise((resolve) => {
-    if (typeof MessageChannel !== "undefined") {
+    if (typeof MessageChannel !== 'undefined') {
       const channel = new MessageChannel();
       channel.port2.onmessage = () => resolve();
       channel.port1.postMessage(null);
@@ -73,15 +73,15 @@ export function yieldControl(): Promise<void> {
  */
 export function validateCode(
   code: string,
-  maxSize: number = 1024 * 1024,
+  maxSize: number = 1024 * 1024
 ): void {
-  if (typeof code !== "string") {
-    throw new Error("Code must be a string");
+  if (typeof code !== 'string') {
+    throw new Error('Code must be a string');
   }
 
   if (code.length > maxSize) {
     throw new Error(
-      `Code size exceeds maximum allowed size of ${maxSize} bytes`,
+      `Code size exceeds maximum allowed size of ${maxSize} bytes`
     );
   }
 
@@ -97,7 +97,7 @@ export function validateCode(
 
   for (const pattern of dangerousPatterns) {
     if (pattern.test(code)) {
-      throw new Error("Code contains potentially dangerous patterns");
+      throw new Error('Code contains potentially dangerous patterns');
     }
   }
 }
@@ -107,29 +107,29 @@ export function validateCode(
  */
 export function createSecureContext(disabledGlobals: string[] = []): string {
   const defaultDisabled = [
-    "fetch",
-    "XMLHttpRequest",
-    "WebSocket",
-    "EventSource",
-    "importScripts",
-    "Worker",
-    "SharedWorker",
-    "ServiceWorker",
-    "navigator",
-    "location",
-    "history",
-    "localStorage",
-    "sessionStorage",
-    "indexedDB",
-    "crypto",
-    "subtle",
+    'fetch',
+    'XMLHttpRequest',
+    'WebSocket',
+    'EventSource',
+    'importScripts',
+    'Worker',
+    'SharedWorker',
+    'ServiceWorker',
+    'navigator',
+    'location',
+    'history',
+    'localStorage',
+    'sessionStorage',
+    'indexedDB',
+    'crypto',
+    'subtle',
   ];
 
   const allDisabled = [...new Set([...defaultDisabled, ...disabledGlobals])];
 
   return (
-    allDisabled.map((global) => `const ${global} = undefined;`).join("\n") +
-    "\n"
+    allDisabled.map((global) => `const ${global} = undefined;`).join('\n') +
+    '\n'
   );
 }
 
@@ -162,4 +162,18 @@ export function wrapUserCode(code: string, timeout: number): string {
       });
     })();
   `;
+}
+
+/**
+ * Convert seconds to milliseconds
+ */
+export function millisecondsFromSeconds(seconds: number): number {
+  return seconds * 1000;
+}
+
+/**
+ * Convert megabytes to kilobytes
+ */
+export function kilobytesFromMegabytes(megabytes: number): number {
+  return megabytes * 1024;
 }
