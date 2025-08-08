@@ -438,15 +438,30 @@ eval('end')`;
             code: 'new WebSocket("ws://test")',
             expectedCode: SecurityErrorCode.WEBSOCKET_CONSTRUCTOR,
           },
-          { code: 'new Worker("w.js")', expectedCode: SecurityErrorCode.WORKER_CONSTRUCTOR },
-          { code: 'localStorage.test', expectedCode: SecurityErrorCode.LOCALSTORAGE_USAGE },
-          { code: 'alert("test")', expectedCode: SecurityErrorCode.ALERT_USAGE },
+          {
+            code: 'new Worker("w.js")',
+            expectedCode: SecurityErrorCode.WORKER_CONSTRUCTOR,
+          },
+          {
+            code: 'localStorage.test',
+            expectedCode: SecurityErrorCode.LOCALSTORAGE_USAGE,
+          },
+          {
+            code: 'alert("test")',
+            expectedCode: SecurityErrorCode.ALERT_USAGE,
+          },
           {
             code: 'requestAnimationFrame(f)',
             expectedCode: SecurityErrorCode.REQUESTANIMATIONFRAME_USAGE,
           },
-          { code: 'importScripts("s")', expectedCode: SecurityErrorCode.IMPORTSCRIPTS_USAGE },
-          { code: 'el.innerHTML = x', expectedCode: SecurityErrorCode.INNERHTML_ASSIGNMENT },
+          {
+            code: 'importScripts("s")',
+            expectedCode: SecurityErrorCode.IMPORTSCRIPTS_USAGE,
+          },
+          {
+            code: 'el.innerHTML = x',
+            expectedCode: SecurityErrorCode.INNERHTML_ASSIGNMENT,
+          },
         ];
 
         patternTests.forEach(({ code, expectedCode }) => {
