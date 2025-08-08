@@ -5,6 +5,7 @@ import {
   createSecureContext,
   sleep,
   yieldControl,
+  SecurityErrorCode,
 } from '../utils.js';
 import { BenchmarkSample } from '../types.js';
 
@@ -428,24 +429,24 @@ eval('end')`;
 
       it('should provide specific error codes for each pattern type', () => {
         const patternTests = [
-          { code: 'fetch("url")', expectedCode: 'FETCH_USAGE' },
+          { code: 'fetch("url")', expectedCode: SecurityErrorCode.FETCH_USAGE },
           {
             code: 'new XMLHttpRequest()',
-            expectedCode: 'XMLHTTPREQUEST_CONSTRUCTOR',
+            expectedCode: SecurityErrorCode.XMLHTTPREQUEST_CONSTRUCTOR,
           },
           {
             code: 'new WebSocket("ws://test")',
-            expectedCode: 'WEBSOCKET_CONSTRUCTOR',
+            expectedCode: SecurityErrorCode.WEBSOCKET_CONSTRUCTOR,
           },
-          { code: 'new Worker("w.js")', expectedCode: 'WORKER_CONSTRUCTOR' },
-          { code: 'localStorage.test', expectedCode: 'LOCALSTORAGE_USAGE' },
-          { code: 'alert("test")', expectedCode: 'ALERT_USAGE' },
+          { code: 'new Worker("w.js")', expectedCode: SecurityErrorCode.WORKER_CONSTRUCTOR },
+          { code: 'localStorage.test', expectedCode: SecurityErrorCode.LOCALSTORAGE_USAGE },
+          { code: 'alert("test")', expectedCode: SecurityErrorCode.ALERT_USAGE },
           {
             code: 'requestAnimationFrame(f)',
-            expectedCode: 'REQUESTANIMATIONFRAME_USAGE',
+            expectedCode: SecurityErrorCode.REQUESTANIMATIONFRAME_USAGE,
           },
-          { code: 'importScripts("s")', expectedCode: 'IMPORTSCRIPTS_USAGE' },
-          { code: 'el.innerHTML = x', expectedCode: 'INNERHTML_ASSIGNMENT' },
+          { code: 'importScripts("s")', expectedCode: SecurityErrorCode.IMPORTSCRIPTS_USAGE },
+          { code: 'el.innerHTML = x', expectedCode: SecurityErrorCode.INNERHTML_ASSIGNMENT },
         ];
 
         patternTests.forEach(({ code, expectedCode }) => {
