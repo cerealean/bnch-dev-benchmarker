@@ -85,20 +85,71 @@ export function validateCode(
     );
   }
 
-  // Basic validation for potentially dangerous patterns
+  // Define dangerous patterns with specific error messages
   const dangerousPatterns = [
-    /while\s*\(\s*true\s*\)/gi,
-    /for\s*\(\s*;\s*;\s*\)/gi,
-    /eval\s*\(/gi,
-    /Function\s*\(/gi,
-    /setTimeout\s*\(/gi,
-    /setInterval\s*\(/gi,
+    {
+      pattern: /while\s*\(\s*true\s*\)/gi,
+      message:
+        'Infinite while loops (while(true)) are not allowed as they can cause the system to freeze',
+      code: 'INFINITE_WHILE_LOOP',
+    },
+    {
+      pattern: /for\s*\(\s*;\s*;\s*\)/gi,
+      message:
+        'Infinite for loops (for(;;)) are not allowed as they can cause the system to freeze',
+      code: 'INFINITE_FOR_LOOP',
+    },
+    {
+      pattern: /eval\s*\(/gi,
+      message:
+        'The eval() function is not allowed as it can execute arbitrary code and poses security risks',
+      code: 'EVAL_USAGE',
+    },
+    {
+      pattern: /Function\s*\(/gi,
+      message:
+        'The Function constructor is not allowed as it can dynamically create and execute code, posing security risks',
+      code: 'FUNCTION_CONSTRUCTOR',
+    },
+    {
+      pattern: /setTimeout\s*\(/gi,
+      message:
+        'setTimeout() is not allowed as it can interfere with benchmarking timing and create resource leaks',
+      code: 'SETTIMEOUT_USAGE',
+    },
+    {
+      pattern: /setInterval\s*\(/gi,
+      message:
+        'setInterval() is not allowed as it can create persistent timers that interfere with benchmarking',
+      code: 'SETINTERVAL_USAGE',
+    },
   ];
 
-  for (const pattern of dangerousPatterns) {
-    if (pattern.test(code)) {
-      throw new Error('Code contains potentially dangerous patterns');
+  // Find all matches and report the earliest one
+  let earliestMatch = null;
+  let earliestPattern = null;
+
+  for (const patternInfo of dangerousPatterns) {
+    // Reset the regex to start from the beginning
+    patternInfo.pattern.lastIndex = 0;
+    const match = patternInfo.pattern.exec(code);
+    if (match && (!earliestMatch || match.index < earliestMatch.index)) {
+      earliestMatch = match;
+      earliestPattern = patternInfo;
     }
+  }
+
+  if (earliestMatch && earliestPattern) {
+    // Find the line number where the pattern was found
+    const lines = code.substring(0, earliestMatch.index).split('\n');
+    const lineNumber = lines.length;
+    const columnNumber = lines[lines.length - 1].length + 1;
+
+    throw new Error(
+      `Security Error [${earliestPattern.code}]: ${earliestPattern.message}\n` +
+        `Found at line ${lineNumber}, column ${columnNumber}: "${earliestMatch[0].trim()}"\n` +
+        `Please remove or replace this code to ensure safe execution.`
+    );
   }
 }
 

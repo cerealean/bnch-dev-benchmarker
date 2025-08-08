@@ -133,40 +133,97 @@ describe('Benchmarker', () => {
 
   describe('security tests', () => {
     describe('code validation', () => {
-      it('should reject infinite while loops', async () => {
+      it('should reject infinite while loops with detailed error', async () => {
         await expect(
           benchmarker.benchmark("while(true) { console.log('infinite'); }")
-        ).rejects.toThrow('Code contains potentially dangerous patterns');
+        ).rejects.toThrow(/Security Error \[INFINITE_WHILE_LOOP\]/);
+
+        // Test the full error message content
+        try {
+          await benchmarker.benchmark(
+            "while(true) { console.log('infinite'); }"
+          );
+        } catch (error) {
+          expect(error.message).toContain('Infinite while loops');
+          expect(error.message).toContain('can cause the system to freeze');
+          expect(error.message).toContain('line 1');
+          expect(error.message).toContain('while(true)');
+          expect(error.message).toContain('Please remove or replace');
+        }
       });
 
-      it('should reject infinite for loops', async () => {
+      it('should reject infinite for loops with detailed error', async () => {
         await expect(
           benchmarker.benchmark("for(;;) { console.log('infinite'); }")
-        ).rejects.toThrow('Code contains potentially dangerous patterns');
+        ).rejects.toThrow(/Security Error \[INFINITE_FOR_LOOP\]/);
+
+        try {
+          await benchmarker.benchmark("for(;;) { console.log('infinite'); }");
+        } catch (error) {
+          expect(error.message).toContain('Infinite for loops');
+          expect(error.message).toContain('can cause the system to freeze');
+          expect(error.message).toContain('for(;;)');
+        }
       });
 
-      it('should reject eval calls', async () => {
+      it('should reject eval calls with detailed error', async () => {
         await expect(
           benchmarker.benchmark('eval(\'console.log("dangerous")\')')
-        ).rejects.toThrow('Code contains potentially dangerous patterns');
+        ).rejects.toThrow(/Security Error \[EVAL_USAGE\]/);
+
+        try {
+          await benchmarker.benchmark('eval(\'console.log("dangerous")\')');
+        } catch (error) {
+          expect(error.message).toContain('eval() function is not allowed');
+          expect(error.message).toContain('security risks');
+          expect(error.message).toContain('eval(');
+        }
       });
 
-      it('should reject Function constructor', async () => {
+      it('should reject Function constructor with detailed error', async () => {
         await expect(
           benchmarker.benchmark("new Function('return 1')()")
-        ).rejects.toThrow('Code contains potentially dangerous patterns');
+        ).rejects.toThrow(/Security Error \[FUNCTION_CONSTRUCTOR\]/);
+
+        try {
+          await benchmarker.benchmark("new Function('return 1')()");
+        } catch (error) {
+          expect(error.message).toContain(
+            'Function constructor is not allowed'
+          );
+          expect(error.message).toContain(
+            'dynamically create and execute code'
+          );
+          expect(error.message).toContain('Function(');
+        }
       });
 
-      it('should reject setTimeout calls', async () => {
+      it('should reject setTimeout calls with detailed error', async () => {
         await expect(
           benchmarker.benchmark('setTimeout(() => {}, 1000)')
-        ).rejects.toThrow('Code contains potentially dangerous patterns');
+        ).rejects.toThrow(/Security Error \[SETTIMEOUT_USAGE\]/);
+
+        try {
+          await benchmarker.benchmark('setTimeout(() => {}, 1000)');
+        } catch (error) {
+          expect(error.message).toContain('setTimeout() is not allowed');
+          expect(error.message).toContain('interfere with benchmarking timing');
+          expect(error.message).toContain('setTimeout(');
+        }
       });
 
-      it('should reject setInterval calls', async () => {
+      it('should reject setInterval calls with detailed error', async () => {
         await expect(
           benchmarker.benchmark('setInterval(() => {}, 1000)')
-        ).rejects.toThrow('Code contains potentially dangerous patterns');
+        ).rejects.toThrow(/Security Error \[SETINTERVAL_USAGE\]/);
+
+        try {
+          await benchmarker.benchmark('setInterval(() => {}, 1000)');
+        } catch (error) {
+          expect(error.message).toContain('setInterval() is not allowed');
+          expect(error.message).toContain('persistent timers');
+          expect(error.message).toContain('setInterval(');
+        }
       });
 
       it('should reject non-string code', async () => {
@@ -176,28 +233,122 @@ describe('Benchmarker', () => {
         );
       });
 
-      it('should handle case-insensitive dangerous patterns', async () => {
+      it('should handle case-insensitive dangerous patterns with detailed errors', async () => {
         await expect(benchmarker.benchmark('WHILE(TRUE) { }')).rejects.toThrow(
-          'Code contains potentially dangerous patterns'
+          /Security Error \[INFINITE_WHILE_LOOP\]/
         );
 
         await expect(benchmarker.benchmark("EVAL('test')")).rejects.toThrow(
-          'Code contains potentially dangerous patterns'
+          /Security Error \[EVAL_USAGE\]/
         );
       });
 
-      it('should detect variations of dangerous patterns', async () => {
-        await expect(
-          benchmarker.benchmark('while (  true  ) { }')
-        ).rejects.toThrow('Code contains potentially dangerous patterns');
+      it('should detect variations of dangerous patterns with line numbers', async () => {
+        const multiLineCode = `
+// Some comment
+const x = 1;
+while (  true  ) { 
+  console.log('bad'); 
+}`;
 
-        await expect(
-          benchmarker.benchmark('for(  ;  ;  ) { }')
-        ).rejects.toThrow('Code contains potentially dangerous patterns');
+        try {
+          await benchmarker.benchmark(multiLineCode);
+        } catch (error) {
+          expect(error.message).toContain(
+            'Security Error [INFINITE_WHILE_LOOP]'
+          );
+          expect(error.message).toContain('line 4'); // Should be on line 4
+          expect(error.message).toContain('while (  true  )');
+        }
 
-        await expect(benchmarker.benchmark("eval  ( 'test' )")).rejects.toThrow(
-          'Code contains potentially dangerous patterns'
-        );
+        const multiLineEvalCode = `
+const a = 1;
+const b = 2;
+eval  ( 'test' );
+const c = 3;`;
+
+        try {
+          await benchmarker.benchmark(multiLineEvalCode);
+        } catch (error) {
+          expect(error.message).toContain('Security Error [EVAL_USAGE]');
+          expect(error.message).toContain('line 4'); // Should be on line 4
+          expect(error.message).toContain('eval  (');
+        }
+      });
+
+      it('should provide helpful suggestions in error messages', async () => {
+        try {
+          await benchmarker.benchmark(
+            'setTimeout(() => console.log("test"), 100)'
+          );
+        } catch (error) {
+          expect(error.message).toContain('Please remove or replace this code');
+          expect(error.message).toContain('to ensure safe execution');
+        }
+      });
+
+      it('should handle nested dangerous patterns', async () => {
+        const nestedCode = `
+function test() {
+  if (true) {
+    while(true) {
+      console.log('nested danger');
+    }
+  }
+}`;
+
+        try {
+          await benchmarker.benchmark(nestedCode);
+        } catch (error) {
+          expect(error.message).toContain(
+            'Security Error [INFINITE_WHILE_LOOP]'
+          );
+          expect(error.message).toContain('line 4'); // Should find the nested while loop
+        }
+      });
+
+      it('should detect multiple patterns and report the first one found', async () => {
+        const multiplePatterns = `
+eval('test');
+setTimeout(() => {}, 100);
+while(true) {}`;
+
+        try {
+          await benchmarker.benchmark(multiplePatterns);
+        } catch (error) {
+          // Should report the first pattern found (eval)
+          expect(error.message).toContain('Security Error [EVAL_USAGE]');
+          expect(error.message).toContain('line 2');
+        }
+      });
+
+      it('should provide actionable error messages for developers', async () => {
+        try {
+          await benchmarker.benchmark(`
+// This is a common mistake - using setTimeout in benchmarks
+setTimeout(() => {
+  console.log('This will interfere with timing');
+}, 100);`);
+          expect.fail('Should have thrown an error');
+        } catch (error) {
+          expect(error.message).toContain('SETTIMEOUT_USAGE');
+          expect(error.message).toContain('interfere with benchmarking timing');
+          expect(error.message).toContain('line 3');
+          expect(error.message).toContain('setTimeout(');
+          expect(error.message).toContain('Please remove or replace');
+        }
+      });
+
+      it('should handle edge case with pattern at very end of code', async () => {
+        const codeEndingWithPattern = 'const x = 1; const y = 2; eval("end")';
+
+        try {
+          await benchmarker.benchmark(codeEndingWithPattern);
+          expect.fail('Should have thrown an error');
+        } catch (error) {
+          expect(error.message).toContain('Security Error [EVAL_USAGE]');
+          expect(error.message).toContain('eval('); // Just check for the eval pattern
+        }
       });
     });
 

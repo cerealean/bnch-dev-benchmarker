@@ -12,9 +12,9 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
-    "test": "vitest run",
-    "test:watch": "vitest --watch",
-    "test:coverage": "vitest --coverage",
+    "test": "npm run build && vitest run",
+    "test:watch": "npm run build && vitest --watch",
+    "test:coverage": "npm run build && vitest --coverage",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "format": "prettier --write \"src/**/*.{ts,js}\" \"*.{ts,js,json,md}\"",
