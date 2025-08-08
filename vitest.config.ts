@@ -1,12 +1,15 @@
 /// <reference types="vitest" />
-import { defineConfig } from "vitest/config";
+import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    environment: "jsdom",
+    environment: 'jsdom',
+    sequence: {
+      shuffle: true,
+    },
     coverage: {
-      reporter: ["text", "json", "html"],
-      exclude: ["node_modules/", "dist/", "**/*.d.ts"],
+      reporter: ['text', 'json', 'html'],
+      exclude: ['node_modules/', 'dist/', '**/*.d.ts'],
     },
   },
 });
