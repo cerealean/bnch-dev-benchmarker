@@ -4,28 +4,28 @@
 // Security context setup - disable dangerous globals
 const createSecureContext = (disabledGlobals = []) => {
   const defaultDisabled = [
-    'fetch',
-    'XMLHttpRequest',
-    'WebSocket',
-    'EventSource',
-    'importScripts',
-    'Worker',
-    'SharedWorker',
-    'ServiceWorker',
-    'navigator',
-    'location',
-    'history',
-    'localStorage',
-    'sessionStorage',
-    'indexedDB',
-    'crypto',
-    'subtle',
+    "fetch",
+    "XMLHttpRequest",
+    "WebSocket",
+    "EventSource",
+    "importScripts",
+    "Worker",
+    "SharedWorker",
+    "ServiceWorker",
+    "navigator",
+    "location",
+    "history",
+    "localStorage",
+    "sessionStorage",
+    "indexedDB",
+    "crypto",
+    "subtle",
   ];
-  
+
   const allDisabled = [...new Set([...defaultDisabled, ...disabledGlobals])];
-  
+
   // Disable globals by setting them to undefined
-  allDisabled.forEach(global => {
+  allDisabled.forEach((global) => {
     try {
       self[global] = undefined;
     } catch (e) {
@@ -47,29 +47,29 @@ const enforceCSP = (csp) => {
 };
 
 // Message handler for benchmark execution
-self.onmessage = function(e) {
+self.onmessage = function (e) {
   const { code, timeout, csp, id } = e.data;
-  
+
   try {
     enforceCSP(csp);
-    
+
     const startTime = performance.now();
     let timeoutId;
     let completed = false;
-    
+
     const executeCode = () => {
       return new Promise((resolve, reject) => {
         try {
           // Set up timeout
           timeoutId = setTimeout(() => {
             if (!completed) {
-              reject(new Error('Execution timeout'));
+              reject(new Error("Execution timeout"));
             }
           }, timeout);
-          
+
           // Execute the user code
           const result = eval(code);
-          
+
           if (result instanceof Promise) {
             result.then(resolve).catch(reject);
           } else {
@@ -80,7 +80,7 @@ self.onmessage = function(e) {
         }
       });
     };
-    
+
     executeCode()
       .then(() => {
         completed = true;
@@ -104,7 +104,6 @@ self.onmessage = function(e) {
       .finally(() => {
         if (timeoutId) clearTimeout(timeoutId);
       });
-      
   } catch (error) {
     self.postMessage({
       id,

@@ -17,6 +17,8 @@
     "test:coverage": "vitest --coverage",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "format": "prettier --write \"src/**/*.{ts,js}\" \"*.{ts,js,json,md}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,js}\" \"*.{ts,js,json,md}\"",
     "typecheck": "tsc --noEmit",
     "clean": "rimraf dist",
     "prepublishOnly": "npm run clean && npm run build && npm run test",

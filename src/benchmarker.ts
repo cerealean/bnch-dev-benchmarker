@@ -4,9 +4,15 @@ import {
   BenchmarkResult,
   BenchmarkSample,
   BenchmarkComparison,
-} from './types.js';
-import { calculateStats, sleep, yieldControl, validateCode, wrapUserCode } from './utils.js';
-import { createBenchmarkWorker, executeInWorker } from './worker.js';
+} from "./types.js";
+import {
+  calculateStats,
+  sleep,
+  yieldControl,
+  validateCode,
+  wrapUserCode,
+} from "./utils.js";
+import { createBenchmarkWorker, executeInWorker } from "./worker.js";
 
 /**
  * Default benchmark configuration
@@ -42,7 +48,10 @@ export class Benchmarker {
   private abortController: AbortController | null = null;
   private worker: Worker | null = null;
 
-  constructor(config: Partial<BenchmarkConfig> = {}, security: Partial<SecurityConfig> = {}) {
+  constructor(
+    config: Partial<BenchmarkConfig> = {},
+    security: Partial<SecurityConfig> = {},
+  ) {
     this.config = { ...DEFAULT_CONFIG, ...config };
     this.security = { ...DEFAULT_SECURITY, ...security };
   }
@@ -53,10 +62,10 @@ export class Benchmarker {
   async benchmark(code: string): Promise<BenchmarkResult> {
     // Validate input
     validateCode(code, this.config.maxCodeSize);
-    
+
     // Set up abort controller
     this.abortController = new AbortController();
-    
+
     // Initialize worker if needed
     if (this.config.useWorker) {
       this.worker = createBenchmarkWorker(this.security);
@@ -69,7 +78,7 @@ export class Benchmarker {
     try {
       // Warmup phase
       await this.runWarmup(code);
-      
+
       if (this.abortController.signal.aborted) {
         aborted = true;
         return this.createResult(samples, startTime, aborted);
@@ -98,7 +107,6 @@ export class Benchmarker {
           await yieldControl();
         }
       }
-
     } catch (error) {
       // Add error sample
       samples.push({
@@ -120,20 +128,27 @@ export class Benchmarker {
   /**
    * Compare two code snippets
    */
-  async compare(baselineCode: string, comparisonCode: string): Promise<BenchmarkComparison> {
+  async compare(
+    baselineCode: string,
+    comparisonCode: string,
+  ): Promise<BenchmarkComparison> {
     const [baseline, comparison] = await Promise.all([
       this.benchmark(baselineCode),
       this.benchmark(comparisonCode),
     ]);
 
-    const relativeDifference = comparison.stats.mean > 0 && baseline.stats.mean > 0
-      ? (baseline.stats.mean - comparison.stats.mean) / baseline.stats.mean
-      : 0;
+    const relativeDifference =
+      comparison.stats.mean > 0 && baseline.stats.mean > 0
+        ? (baseline.stats.mean - comparison.stats.mean) / baseline.stats.mean
+        : 0;
 
     // Simple statistical significance test (t-test approximation)
     const significanceLevel = this.calculateSignificance(baseline, comparison);
-    
-    const summary = this.generateComparisonSummary(relativeDifference, significanceLevel);
+
+    const summary = this.generateComparisonSummary(
+      relativeDifference,
+      significanceLevel,
+    );
 
     return {
       baseline,
@@ -159,9 +174,9 @@ export class Benchmarker {
   private async runWarmup(code: string): Promise<void> {
     for (let i = 0; i < this.config.warmupIterations; i++) {
       if (this.abortController?.signal.aborted) return;
-      
+
       await this.runSingleBenchmark(code);
-      
+
       if (this.config.yieldBetweenSamples) {
         await yieldControl();
       }
@@ -184,7 +199,7 @@ export class Benchmarker {
    */
   private async runInWorker(code: string): Promise<BenchmarkSample> {
     if (!this.worker) {
-      throw new Error('Worker not initialized');
+      throw new Error("Worker not initialized");
     }
 
     const wrappedCode = wrapUserCode(code, this.config.executionTimeout);
@@ -192,7 +207,7 @@ export class Benchmarker {
       this.worker,
       wrappedCode,
       this.config.executionTimeout,
-      this.security.csp
+      this.security.csp,
     );
 
     return {
@@ -207,11 +222,11 @@ export class Benchmarker {
    */
   private async runInMainThread(code: string): Promise<BenchmarkSample> {
     const startTime = performance.now();
-    
+
     try {
       const wrappedCode = wrapUserCode(code, this.config.executionTimeout);
       await eval(wrappedCode);
-      
+
       const endTime = performance.now();
       return {
         time: endTime - startTime,
@@ -233,7 +248,7 @@ export class Benchmarker {
   private createResult(
     samples: BenchmarkSample[],
     startTime: number,
-    aborted: boolean
+    aborted: boolean,
   ): BenchmarkResult {
     const totalTime = performance.now() - startTime;
     const stats = calculateStats(samples);
@@ -253,16 +268,16 @@ export class Benchmarker {
    */
   private calculateSignificance(
     baseline: BenchmarkResult,
-    comparison: BenchmarkResult
+    comparison: BenchmarkResult,
   ): number {
     // Simplified significance calculation
     // In a real implementation, you'd want a proper t-test
     const baselineCV = baseline.stats.coefficientOfVariation;
     const comparisonCV = comparison.stats.coefficientOfVariation;
-    
+
     // Higher coefficient of variation means less reliable results
     const reliability = Math.max(0, 1 - Math.max(baselineCV, comparisonCV));
-    
+
     return reliability;
   }
 
@@ -271,17 +286,21 @@ export class Benchmarker {
    */
   private generateComparisonSummary(
     relativeDifference: number,
-    significanceLevel: number
+    significanceLevel: number,
   ): string {
     const percentChange = Math.abs(relativeDifference * 100);
-    const direction = relativeDifference > 0 ? 'faster' : 'slower';
-    const confidence = significanceLevel > 0.7 ? 'high' : 
-                      significanceLevel > 0.4 ? 'medium' : 'low';
-    
+    const direction = relativeDifference > 0 ? "faster" : "slower";
+    const confidence =
+      significanceLevel > 0.7
+        ? "high"
+        : significanceLevel > 0.4
+          ? "medium"
+          : "low";
+
     if (percentChange < 1) {
       return `Performance difference is negligible (${confidence} confidence)`;
     }
-    
+
     return `Comparison is ${percentChange.toFixed(1)}% ${direction} (${confidence} confidence)`;
   }
 }

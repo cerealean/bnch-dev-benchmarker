@@ -22,17 +22,14 @@ npm install @bnch/benchmarker
 ## Quick Start
 
 ```typescript
-import { Benchmarker, benchmark, compare } from '@bnch/benchmarker';
+import { Benchmarker, benchmark, compare } from "@bnch/benchmarker";
 
 // Simple benchmark
-const result = await benchmark('Math.random()');
+const result = await benchmark("Math.random()");
 console.log(`Mean execution time: ${result.stats.mean}ms`);
 
 // Compare two code snippets
-const comparison = await compare(
-  'Math.random()',
-  'Math.random() * 2'
-);
+const comparison = await compare("Math.random()", "Math.random() * 2");
 console.log(comparison.summary);
 
 // Advanced usage with custom configuration
@@ -40,7 +37,7 @@ const benchmarker = new Benchmarker({
   warmupIterations: 10,
   minSamples: 20,
   maxTime: 5000,
-  useWorker: true
+  useWorker: true,
 });
 
 const advancedResult = await benchmarker.benchmark(`
@@ -55,14 +52,14 @@ const advancedResult = await benchmarker.benchmark(`
 
 ```typescript
 interface BenchmarkConfig {
-  warmupIterations?: number;    // Default: 5
-  minSamples?: number;          // Default: 10
-  maxSamples?: number;          // Default: 100
-  maxTime?: number;             // Default: 10000ms
+  warmupIterations?: number; // Default: 5
+  minSamples?: number; // Default: 10
+  maxSamples?: number; // Default: 100
+  maxTime?: number; // Default: 10000ms
   yieldBetweenSamples?: boolean; // Default: true
-  maxCodeSize?: number;         // Default: 1MB
-  executionTimeout?: number;    // Default: 1000ms
-  useWorker?: boolean;          // Default: true
+  maxCodeSize?: number; // Default: 1MB
+  executionTimeout?: number; // Default: 1000ms
+  useWorker?: boolean; // Default: true
 }
 ```
 
@@ -70,27 +67,30 @@ interface BenchmarkConfig {
 
 ```typescript
 interface SecurityConfig {
-  csp?: string;                 // Content Security Policy
-  disabledGlobals?: string[];   // Additional globals to disable
-  disableNetwork?: boolean;     // Default: true
-  maxExecutionTime?: number;    // Default: 1000ms
-  maxMemoryMB?: number;         // Default: 100MB (reference only)
+  csp?: string; // Content Security Policy
+  disabledGlobals?: string[]; // Additional globals to disable
+  disableNetwork?: boolean; // Default: true
+  maxExecutionTime?: number; // Default: 1000ms
+  maxMemoryMB?: number; // Default: 100MB (reference only)
 }
 ```
 
 ## Security Features
 
 ### Network Isolation
+
 - Disables `fetch`, `XMLHttpRequest`, `WebSocket`, etc.
 - Configurable CSP enforcement
 - Sandbox execution environment
 
 ### Execution Limits
+
 - Per-sample timeout protection
 - Code size limits (default 1MB)
 - Pattern detection for dangerous code
 
 ### Worker Isolation
+
 - Executes code in dedicated web workers
 - Isolated from main thread globals
 - Automatic cleanup and termination
@@ -126,23 +126,23 @@ const comparison = await compare(baseline, comparison, config?);
 
 ```typescript
 interface BenchmarkResult {
-  samples: BenchmarkSample[];    // Individual measurements
-  stats: BenchmarkStats;         // Statistical summary
-  config: BenchmarkConfig;       // Configuration used
-  security: SecurityConfig;      // Security settings
-  totalTime: number;             // Total benchmark time
-  aborted: boolean;              // Whether aborted
+  samples: BenchmarkSample[]; // Individual measurements
+  stats: BenchmarkStats; // Statistical summary
+  config: BenchmarkConfig; // Configuration used
+  security: SecurityConfig; // Security settings
+  totalTime: number; // Total benchmark time
+  aborted: boolean; // Whether aborted
 }
 
 interface BenchmarkStats {
-  mean: number;                  // Average execution time
-  median: number;                // Median execution time
-  standardDeviation: number;     // Standard deviation
-  min: number;                   // Fastest execution
-  max: number;                   // Slowest execution
-  successfulSamples: number;     // Successful runs
-  failedSamples: number;         // Failed runs
-  operationsPerSecond: number;   // Ops/sec (1000/mean)
+  mean: number; // Average execution time
+  median: number; // Median execution time
+  standardDeviation: number; // Standard deviation
+  min: number; // Fastest execution
+  max: number; // Slowest execution
+  successfulSamples: number; // Successful runs
+  failedSamples: number; // Failed runs
+  operationsPerSecond: number; // Ops/sec (1000/mean)
   coefficientOfVariation: number; // Reliability measure
 }
 ```
@@ -152,7 +152,7 @@ interface BenchmarkStats {
 ### Basic Performance Testing
 
 ```typescript
-import { benchmark } from '@bnch/benchmarker';
+import { benchmark } from "@bnch/benchmarker";
 
 // Test array methods
 const mapResult = await benchmark(`
@@ -168,14 +168,14 @@ const forLoopResult = await benchmark(`
   }
 `);
 
-console.log('Map:', mapResult.stats.mean, 'ms');
-console.log('For loop:', forLoopResult.stats.mean, 'ms');
+console.log("Map:", mapResult.stats.mean, "ms");
+console.log("For loop:", forLoopResult.stats.mean, "ms");
 ```
 
 ### A/B Testing
 
 ```typescript
-import { compare } from '@bnch/benchmarker';
+import { compare } from "@bnch/benchmarker";
 
 const comparison = await compare(
   // Version A: Object property access
@@ -187,7 +187,7 @@ const comparison = await compare(
   `
     const obj = { value: 42 };
     const { value } = obj;
-  `
+  `,
 );
 
 console.log(comparison.summary);
@@ -197,7 +197,7 @@ console.log(comparison.summary);
 ### Advanced Configuration
 
 ```typescript
-import { Benchmarker } from '@bnch/benchmarker';
+import { Benchmarker } from "@bnch/benchmarker";
 
 const benchmarker = new Benchmarker(
   {
@@ -206,13 +206,13 @@ const benchmarker = new Benchmarker(
     maxSamples: 200,
     maxTime: 30000,
     executionTimeout: 2000,
-    useWorker: true
+    useWorker: true,
   },
   {
     csp: "default-src 'none'; worker-src 'self'; script-src 'unsafe-eval';",
-    disabledGlobals: ['localStorage', 'sessionStorage'],
-    maxExecutionTime: 2000
-  }
+    disabledGlobals: ["localStorage", "sessionStorage"],
+    maxExecutionTime: 2000,
+  },
 );
 
 const result = await benchmarker.benchmark(`
@@ -253,6 +253,7 @@ The web worker code is maintained in a separate file for better organization:
 - **Build Process**: The `inline-worker.mjs` script reads `worker-script.js` and generates `worker-code.ts` during the build process
 
 When modifying the worker logic:
+
 1. Edit `src/worker-script.js`
 2. Run `npm run build` (automatically runs the inline script)
 3. The generated `worker-code.ts` will be updated automatically
