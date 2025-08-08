@@ -4,15 +4,16 @@ import {
   BenchmarkResult,
   BenchmarkSample,
   BenchmarkComparison,
-} from "./types.js";
+} from './types.js';
 import {
   calculateStats,
-  sleep,
   yieldControl,
   validateCode,
   wrapUserCode,
-} from "./utils.js";
-import { createBenchmarkWorker, executeInWorker } from "./worker.js";
+  millisecondsFromSeconds as secondsToMilliseconds,
+  kilobytesFromMegabytes,
+} from './utils.js';
+import { createBenchmarkWorker, executeInWorker } from './worker.js';
 
 /**
  * Default benchmark configuration
@@ -21,10 +22,10 @@ const DEFAULT_CONFIG: Required<BenchmarkConfig> = {
   warmupIterations: 5,
   minSamples: 10,
   maxSamples: 100,
-  maxTime: 10000, // 10 seconds
+  maxTime: secondsToMilliseconds(10),
   yieldBetweenSamples: true,
-  maxCodeSize: 1024 * 1024, // 1MB
-  executionTimeout: 1000, // 1 second per execution
+  maxCodeSize: kilobytesFromMegabytes(1),
+  executionTimeout: secondsToMilliseconds(1),
   useWorker: true,
 };
 
@@ -32,7 +33,7 @@ const DEFAULT_CONFIG: Required<BenchmarkConfig> = {
  * Default security configuration
  */
 const DEFAULT_SECURITY: Required<SecurityConfig> = {
-  csp: "default-src 'none'; worker-src 'self'; script-src 'unsafe-eval';",
+  csp: "default-src 'none'; script-src 'unsafe-eval'; worker-src 'self'; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none';",
   disabledGlobals: [],
   disableNetwork: true,
   maxExecutionTime: 1000,
@@ -50,7 +51,7 @@ export class Benchmarker {
 
   constructor(
     config: Partial<BenchmarkConfig> = {},
-    security: Partial<SecurityConfig> = {},
+    security: Partial<SecurityConfig> = {}
   ) {
     this.config = { ...DEFAULT_CONFIG, ...config };
     this.security = { ...DEFAULT_SECURITY, ...security };
@@ -130,7 +131,7 @@ export class Benchmarker {
    */
   async compare(
     baselineCode: string,
-    comparisonCode: string,
+    comparisonCode: string
   ): Promise<BenchmarkComparison> {
     const [baseline, comparison] = await Promise.all([
       this.benchmark(baselineCode),
@@ -147,7 +148,7 @@ export class Benchmarker {
 
     const summary = this.generateComparisonSummary(
       relativeDifference,
-      significanceLevel,
+      significanceLevel
     );
 
     return {
@@ -199,7 +200,7 @@ export class Benchmarker {
    */
   private async runInWorker(code: string): Promise<BenchmarkSample> {
     if (!this.worker) {
-      throw new Error("Worker not initialized");
+      throw new Error('Worker not initialized');
     }
 
     const wrappedCode = wrapUserCode(code, this.config.executionTimeout);
@@ -207,7 +208,7 @@ export class Benchmarker {
       this.worker,
       wrappedCode,
       this.config.executionTimeout,
-      this.security.csp,
+      this.security.csp
     );
 
     return {
@@ -248,7 +249,7 @@ export class Benchmarker {
   private createResult(
     samples: BenchmarkSample[],
     startTime: number,
-    aborted: boolean,
+    aborted: boolean
   ): BenchmarkResult {
     const totalTime = performance.now() - startTime;
     const stats = calculateStats(samples);
@@ -268,7 +269,7 @@ export class Benchmarker {
    */
   private calculateSignificance(
     baseline: BenchmarkResult,
-    comparison: BenchmarkResult,
+    comparison: BenchmarkResult
   ): number {
     // Simplified significance calculation
     // In a real implementation, you'd want a proper t-test
@@ -286,21 +287,23 @@ export class Benchmarker {
    */
   private generateComparisonSummary(
     relativeDifference: number,
-    significanceLevel: number,
+    significanceLevel: number
   ): string {
     const percentChange = Math.abs(relativeDifference * 100);
-    const direction = relativeDifference > 0 ? "faster" : "slower";
+    const direction = relativeDifference > 0 ? 'faster' : 'slower';
     const confidence =
       significanceLevel > 0.7
-        ? "high"
+        ? 'high'
         : significanceLevel > 0.4
-          ? "medium"
-          : "low";
+        ? 'medium'
+        : 'low';
 
     if (percentChange < 1) {
       return `Performance difference is negligible (${confidence} confidence)`;
     }
 
-    return `Comparison is ${percentChange.toFixed(1)}% ${direction} (${confidence} confidence)`;
+    return `Comparison is ${percentChange.toFixed(
+      1
+    )}% ${direction} (${confidence} confidence)`;
   }
 }
