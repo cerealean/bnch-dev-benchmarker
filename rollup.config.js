@@ -1,6 +1,7 @@
 import typescript from '@rollup/plugin-typescript';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
+import copy from 'rollup-plugin-copy';
 import { readFileSync } from 'fs';
 
 const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
@@ -28,5 +29,10 @@ export default {
       declarationDir: './dist',
       rootDir: './src',
     }),
+    copy({
+      targets: [
+        { src: 'src/worker-script.js', dest: 'dist' }
+      ]
+    })
   ],
 };

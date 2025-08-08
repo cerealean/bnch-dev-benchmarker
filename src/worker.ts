@@ -1,16 +1,12 @@
 import { SecurityConfig } from './types.js';
-import { workerCode } from './worker-code.js';
 
 /**
  * Create a new worker for secure code execution
  */
 export function createBenchmarkWorker(security: SecurityConfig): Worker {
-  const blob = new Blob([workerCode], { type: 'application/javascript' });
-  const workerUrl = URL.createObjectURL(blob);
+  // Use the worker script file directly
+  const workerUrl = new URL('./worker-script.js', import.meta.url);
   const worker = new Worker(workerUrl);
-  
-  // Clean up the blob URL after worker creation
-  setTimeout(() => URL.revokeObjectURL(workerUrl), 100);
   
   return worker;
 }

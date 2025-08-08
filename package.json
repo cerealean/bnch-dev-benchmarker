@@ -10,7 +10,6 @@
     "dist"
   ],
   "scripts": {
-    "prebuild": "node inline-worker.mjs",
     "build": "rollup -c",
     "dev": "rollup -c -w",
     "test": "vitest run",
