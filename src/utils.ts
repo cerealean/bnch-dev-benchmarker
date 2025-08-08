@@ -123,6 +123,156 @@ export function validateCode(
         'setInterval() is not allowed as it can create persistent timers that interfere with benchmarking',
       code: 'SETINTERVAL_USAGE',
     },
+    {
+      pattern: /fetch\s*\(/gi,
+      message:
+        'The fetch() API is not allowed as it can make network requests and cause timing interference',
+      code: 'FETCH_USAGE',
+    },
+    {
+      pattern: /XMLHttpRequest\s*\(/gi,
+      message:
+        'XMLHttpRequest is not allowed as it can make network requests and poses security risks',
+      code: 'XMLHTTPREQUEST_USAGE',
+    },
+    {
+      pattern: /new\s+XMLHttpRequest\s*\(/gi,
+      message:
+        'Creating XMLHttpRequest instances is not allowed as it can make network requests and poses security risks',
+      code: 'XMLHTTPREQUEST_CONSTRUCTOR',
+    },
+    {
+      pattern: /WebSocket\s*\(/gi,
+      message:
+        'WebSocket connections are not allowed as they can establish persistent network connections',
+      code: 'WEBSOCKET_USAGE',
+    },
+    {
+      pattern: /new\s+WebSocket\s*\(/gi,
+      message:
+        'Creating WebSocket instances is not allowed as they can establish persistent network connections',
+      code: 'WEBSOCKET_CONSTRUCTOR',
+    },
+    {
+      pattern: /EventSource\s*\(/gi,
+      message:
+        'EventSource is not allowed as it can establish server-sent event connections',
+      code: 'EVENTSOURCE_USAGE',
+    },
+    {
+      pattern: /new\s+EventSource\s*\(/gi,
+      message:
+        'Creating EventSource instances is not allowed as they can establish server-sent event connections',
+      code: 'EVENTSOURCE_CONSTRUCTOR',
+    },
+    {
+      pattern: /Worker\s*\(/gi,
+      message:
+        'Creating Worker instances is not allowed as it can spawn additional threads and bypass security',
+      code: 'WORKER_USAGE',
+    },
+    {
+      pattern: /new\s+Worker\s*\(/gi,
+      message:
+        'Creating Worker instances is not allowed as it can spawn additional threads and bypass security',
+      code: 'WORKER_CONSTRUCTOR',
+    },
+    {
+      pattern: /SharedWorker\s*\(/gi,
+      message:
+        'SharedWorker is not allowed as it can create shared execution contexts and bypass security',
+      code: 'SHAREDWORKER_USAGE',
+    },
+    {
+      pattern: /new\s+SharedWorker\s*\(/gi,
+      message:
+        'Creating SharedWorker instances is not allowed as they can create shared execution contexts and bypass security',
+      code: 'SHAREDWORKER_CONSTRUCTOR',
+    },
+    {
+      pattern: /importScripts\s*\(/gi,
+      message:
+        'importScripts() is not allowed as it can load and execute external scripts, posing security risks',
+      code: 'IMPORTSCRIPTS_USAGE',
+    },
+    {
+      pattern: /document\.createElement\s*\(\s*['"`]script['"`]/gi,
+      message:
+        'Creating script elements is not allowed as it can inject and execute arbitrary code',
+      code: 'SCRIPT_ELEMENT_CREATION',
+    },
+    {
+      pattern: /\.innerHTML\s*=/gi,
+      message:
+        'Setting innerHTML is not allowed as it can inject and execute scripts, posing XSS risks',
+      code: 'INNERHTML_ASSIGNMENT',
+    },
+    {
+      pattern: /\.outerHTML\s*=/gi,
+      message:
+        'Setting outerHTML is not allowed as it can inject and execute scripts, posing XSS risks',
+      code: 'OUTERHTML_ASSIGNMENT',
+    },
+    {
+      pattern: /requestAnimationFrame\s*\(/gi,
+      message:
+        'requestAnimationFrame() is not allowed as it can interfere with benchmarking timing precision',
+      code: 'REQUESTANIMATIONFRAME_USAGE',
+    },
+    {
+      pattern: /setImmediate\s*\(/gi,
+      message:
+        'setImmediate() is not allowed as it can interfere with benchmarking timing and event loop control',
+      code: 'SETIMMEDIATE_USAGE',
+    },
+    {
+      pattern: /process\.nextTick\s*\(/gi,
+      message:
+        'process.nextTick() is not allowed as it can interfere with benchmarking timing in Node.js environments',
+      code: 'PROCESS_NEXTTICK_USAGE',
+    },
+    {
+      pattern: /crypto\.subtle/gi,
+      message:
+        'The crypto.subtle API is not allowed as it may interfere with timing measurements and poses security considerations',
+      code: 'CRYPTO_SUBTLE_USAGE',
+    },
+    {
+      pattern: /localStorage\s*\./gi,
+      message:
+        'localStorage access is not allowed as it can cause side effects and timing variations',
+      code: 'LOCALSTORAGE_USAGE',
+    },
+    {
+      pattern: /sessionStorage\s*\./gi,
+      message:
+        'sessionStorage access is not allowed as it can cause side effects and timing variations',
+      code: 'SESSIONSTORAGE_USAGE',
+    },
+    {
+      pattern: /indexedDB\s*\./gi,
+      message:
+        'indexedDB access is not allowed as it involves asynchronous database operations that interfere with benchmarking',
+      code: 'INDEXEDDB_USAGE',
+    },
+    {
+      pattern: /alert\s*\(/gi,
+      message:
+        'alert() is not allowed as it blocks execution and interferes with benchmarking timing',
+      code: 'ALERT_USAGE',
+    },
+    {
+      pattern: /confirm\s*\(/gi,
+      message:
+        'confirm() is not allowed as it blocks execution and interferes with benchmarking timing',
+      code: 'CONFIRM_USAGE',
+    },
+    {
+      pattern: /prompt\s*\(/gi,
+      message:
+        'prompt() is not allowed as it blocks execution and interferes with benchmarking timing',
+      code: 'PROMPT_USAGE',
+    },
   ];
 
   // Find all matches and report the earliest one
@@ -145,11 +295,13 @@ export function validateCode(
     const lineNumber = lines.length;
     const columnNumber = lines[lines.length - 1].length + 1;
 
-    throw new Error(
+    const error = new Error(
       `Security Error [${earliestPattern.code}]: ${earliestPattern.message}\n` +
         `Found at line ${lineNumber}, column ${columnNumber}: "${earliestMatch[0].trim()}"\n` +
         `Please remove or replace this code to ensure safe execution.`
     );
+    (error as any).code = earliestPattern.code;
+    throw error;
   }
 }
 

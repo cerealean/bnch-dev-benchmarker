@@ -210,6 +210,254 @@ eval('end')`;
         expect(error.message).toContain('line 4');
       }
     });
+
+    describe('network and communication patterns', () => {
+      it('should reject fetch calls', () => {
+        expect(() => validateCode('fetch("https://api.example.com")')).toThrow(
+          /Security Error \[FETCH_USAGE\].*fetch\(\) API is not allowed.*network requests/
+        );
+      });
+
+      it('should reject XMLHttpRequest usage', () => {
+        expect(() => validateCode('XMLHttpRequest()')).toThrow(
+          /Security Error \[XMLHTTPREQUEST_USAGE\].*XMLHttpRequest is not allowed.*network requests/
+        );
+      });
+
+      it('should reject XMLHttpRequest constructor', () => {
+        expect(() => validateCode('new XMLHttpRequest()')).toThrow(
+          /Security Error \[XMLHTTPREQUEST_CONSTRUCTOR\].*XMLHttpRequest instances.*network requests/
+        );
+      });
+
+      it('should reject WebSocket usage', () => {
+        expect(() => validateCode('WebSocket("ws://localhost")')).toThrow(
+          /Security Error \[WEBSOCKET_USAGE\].*WebSocket connections.*persistent network connections/
+        );
+      });
+
+      it('should reject WebSocket constructor', () => {
+        expect(() => validateCode('new WebSocket("ws://localhost")')).toThrow(
+          /Security Error \[WEBSOCKET_CONSTRUCTOR\].*WebSocket instances.*persistent network connections/
+        );
+      });
+
+      it('should reject EventSource usage', () => {
+        expect(() => validateCode('EventSource("/events")')).toThrow(
+          /Security Error \[EVENTSOURCE_USAGE\].*EventSource is not allowed.*server-sent event/
+        );
+      });
+
+      it('should reject EventSource constructor', () => {
+        expect(() => validateCode('new EventSource("/events")')).toThrow(
+          /Security Error \[EVENTSOURCE_CONSTRUCTOR\].*EventSource instances.*server-sent event/
+        );
+      });
+    });
+
+    describe('worker and thread patterns', () => {
+      it('should reject Worker usage', () => {
+        expect(() => validateCode('Worker("worker.js")')).toThrow(
+          /Security Error \[WORKER_USAGE\].*Worker instances.*spawn additional threads/
+        );
+      });
+
+      it('should reject Worker constructor', () => {
+        expect(() => validateCode('new Worker("worker.js")')).toThrow(
+          /Security Error \[WORKER_CONSTRUCTOR\].*Worker instances.*spawn additional threads/
+        );
+      });
+
+      it('should reject SharedWorker usage', () => {
+        expect(() => validateCode('SharedWorker("shared.js")')).toThrow(
+          /Security Error \[SHAREDWORKER_USAGE\].*SharedWorker is not allowed.*shared execution contexts/
+        );
+      });
+
+      it('should reject SharedWorker constructor', () => {
+        expect(() => validateCode('new SharedWorker("shared.js")')).toThrow(
+          /Security Error \[SHAREDWORKER_CONSTRUCTOR\].*SharedWorker instances.*shared execution contexts/
+        );
+      });
+
+      it('should reject importScripts', () => {
+        expect(() => validateCode('importScripts("malicious.js")')).toThrow(
+          /Security Error \[IMPORTSCRIPTS_USAGE\].*importScripts\(\) is not allowed.*external scripts/
+        );
+      });
+    });
+
+    describe('DOM manipulation patterns', () => {
+      it('should reject script element creation', () => {
+        expect(() => validateCode('document.createElement("script")')).toThrow(
+          /Security Error \[SCRIPT_ELEMENT_CREATION\].*script elements.*inject and execute arbitrary code/
+        );
+      });
+
+      it('should reject innerHTML assignment', () => {
+        expect(() =>
+          validateCode('element.innerHTML = "<script>alert(1)</script>"')
+        ).toThrow(
+          /Security Error \[INNERHTML_ASSIGNMENT\].*innerHTML.*inject and execute scripts/
+        );
+      });
+
+      it('should reject outerHTML assignment', () => {
+        expect(() =>
+          validateCode('element.outerHTML = "<div>content</div>"')
+        ).toThrow(
+          /Security Error \[OUTERHTML_ASSIGNMENT\].*outerHTML.*inject and execute scripts/
+        );
+      });
+    });
+
+    describe('storage and persistence patterns', () => {
+      it('should reject localStorage access', () => {
+        expect(() =>
+          validateCode('localStorage.setItem("key", "value")')
+        ).toThrow(
+          /Security Error \[LOCALSTORAGE_USAGE\].*localStorage access.*side effects and timing variations/
+        );
+      });
+
+      it('should reject sessionStorage access', () => {
+        expect(() => validateCode('sessionStorage.getItem("key")')).toThrow(
+          /Security Error \[SESSIONSTORAGE_USAGE\].*sessionStorage access.*side effects and timing variations/
+        );
+      });
+
+      it('should reject indexedDB access', () => {
+        expect(() => validateCode('indexedDB.open("database")')).toThrow(
+          /Security Error \[INDEXEDDB_USAGE\].*indexedDB access.*asynchronous database operations/
+        );
+      });
+    });
+
+    describe('timing and animation patterns', () => {
+      it('should reject requestAnimationFrame', () => {
+        expect(() => validateCode('requestAnimationFrame(() => {})')).toThrow(
+          /Security Error \[REQUESTANIMATIONFRAME_USAGE\].*requestAnimationFrame\(\).*timing precision/
+        );
+      });
+
+      it('should reject setImmediate', () => {
+        expect(() => validateCode('setImmediate(() => {})')).toThrow(
+          /Security Error \[SETIMMEDIATE_USAGE\].*setImmediate\(\).*timing and event loop control/
+        );
+      });
+
+      it('should reject process.nextTick', () => {
+        expect(() => validateCode('process.nextTick(() => {})')).toThrow(
+          /Security Error \[PROCESS_NEXTTICK_USAGE\].*process\.nextTick\(\).*timing in Node\.js/
+        );
+      });
+    });
+
+    describe('cryptography patterns', () => {
+      it('should reject crypto.subtle usage', () => {
+        expect(() => validateCode('crypto.subtle.encrypt()')).toThrow(
+          /Security Error \[CRYPTO_SUBTLE_USAGE\].*crypto\.subtle.*timing measurements/
+        );
+      });
+    });
+
+    describe('user interface blocking patterns', () => {
+      it('should reject alert calls', () => {
+        expect(() => validateCode('alert("message")')).toThrow(
+          /Security Error \[ALERT_USAGE\].*alert\(\).*blocks execution/
+        );
+      });
+
+      it('should reject confirm calls', () => {
+        expect(() => validateCode('confirm("Are you sure?")')).toThrow(
+          /Security Error \[CONFIRM_USAGE\].*confirm\(\).*blocks execution/
+        );
+      });
+
+      it('should reject prompt calls', () => {
+        expect(() => validateCode('prompt("Enter value:")')).toThrow(
+          /Security Error \[PROMPT_USAGE\].*prompt\(\).*blocks execution/
+        );
+      });
+    });
+
+    describe('case sensitivity and whitespace handling', () => {
+      it('should detect patterns regardless of case', () => {
+        expect(() => validateCode('FETCH("url")')).toThrow(/FETCH_USAGE/);
+        expect(() => validateCode('WebSocket("url")')).toThrow(
+          /WEBSOCKET_USAGE/
+        );
+        expect(() => validateCode('ALERT("message")')).toThrow(/ALERT_USAGE/);
+        expect(() => validateCode('LocalStorage.setItem("k", "v")')).toThrow(
+          /LOCALSTORAGE_USAGE/
+        );
+      });
+
+      it('should handle whitespace variations in new patterns', () => {
+        expect(() => validateCode('fetch  ("url")')).toThrow(/FETCH_USAGE/);
+        expect(() => validateCode('new   XMLHttpRequest()')).toThrow(
+          /XMLHTTPREQUEST_CONSTRUCTOR/
+        );
+        expect(() => validateCode('localStorage  .setItem("k", "v")')).toThrow(
+          /LOCALSTORAGE_USAGE/
+        );
+        expect(() => validateCode('requestAnimationFrame  (() => {})')).toThrow(
+          /REQUESTANIMATIONFRAME_USAGE/
+        );
+      });
+    });
+
+    describe('comprehensive pattern detection', () => {
+      it('should detect multiple types of dangerous patterns', () => {
+        const dangerousCodes = [
+          'fetch("api")',
+          'new XMLHttpRequest()',
+          'new Worker("w.js")',
+          'localStorage.getItem("k")',
+          'crypto.subtle.digest()',
+          'alert("hi")',
+          'requestAnimationFrame(fn)',
+          'importScripts("s.js")',
+          'element.innerHTML = html',
+        ];
+
+        dangerousCodes.forEach((code) => {
+          expect(() => validateCode(code)).toThrow(/Security Error/);
+        });
+      });
+
+      it('should provide specific error codes for each pattern type', () => {
+        const patternTests = [
+          { code: 'fetch("url")', expectedCode: 'FETCH_USAGE' },
+          {
+            code: 'new XMLHttpRequest()',
+            expectedCode: 'XMLHTTPREQUEST_CONSTRUCTOR',
+          },
+          {
+            code: 'new WebSocket("ws://test")',
+            expectedCode: 'WEBSOCKET_CONSTRUCTOR',
+          },
+          { code: 'new Worker("w.js")', expectedCode: 'WORKER_CONSTRUCTOR' },
+          { code: 'localStorage.test', expectedCode: 'LOCALSTORAGE_USAGE' },
+          { code: 'alert("test")', expectedCode: 'ALERT_USAGE' },
+          {
+            code: 'requestAnimationFrame(f)',
+            expectedCode: 'REQUESTANIMATIONFRAME_USAGE',
+          },
+          { code: 'importScripts("s")', expectedCode: 'IMPORTSCRIPTS_USAGE' },
+          { code: 'el.innerHTML = x', expectedCode: 'INNERHTML_ASSIGNMENT' },
+        ];
+
+        patternTests.forEach(({ code, expectedCode }) => {
+          try {
+            validateCode(code);
+            expect.fail(`Expected ${code} to throw`);
+          } catch (error) {
+            expect(error.code).toBe(expectedCode);
+          }
+        });
+      });
+    });
   });
 
   describe('createSecureContext', () => {
