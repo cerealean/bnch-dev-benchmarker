@@ -17,19 +17,16 @@ export const dangerousPatterns: DangerousPattern[] = [
     code: SecurityErrorCode.INFINITE_WHILE_LOOP,
   },
   {
-    pattern: /while\s*\(\s*\!\s*false\s*\)/gi,
+    pattern: /while\s*\(\s*(\!{2,})\s*true\s*\)/gi,
     code: SecurityErrorCode.INFINITE_WHILE_LOOP,
   },
   {
-    pattern: /while\s*\(\s*\!\s*\!\s*true\s*\)/gi,
+    pattern: /while\s*\(\s*(\!{1,})\s*false\s*\)/gi,
     code: SecurityErrorCode.INFINITE_WHILE_LOOP,
   },
   {
-    pattern: /while\s*\(\s*\!\s*\!\s*\!\s*false\s*\)/gi,
-    code: SecurityErrorCode.INFINITE_WHILE_LOOP,
-  },
-  {
-    pattern: /while\s*\(\s*\!\s*\!\s*\!\s*\!\s*true\s*\)/gi,
+    pattern:
+      /while\s*\(\s*\"?\s*([a-zA-Z_]\w*|\d+)\s*\"?\s*(={2,3})\s*\"?\s*\1\s*\"?\s*\)/gi,
     code: SecurityErrorCode.INFINITE_WHILE_LOOP,
   },
   {

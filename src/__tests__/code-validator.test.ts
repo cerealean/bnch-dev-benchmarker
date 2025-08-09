@@ -70,6 +70,40 @@ describe('CodeValidator', () => {
       ).toThrow(
         /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
       );
+
+      ['==', '==='].forEach((operator) => {
+        expect(() =>
+          validator.validateCode(
+            `while(yes ${operator} yes) { console.log('test'); }`
+          )
+        ).toThrow(
+          /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
+        );
+
+        expect(() =>
+          validator.validateCode(
+            `while(no ${operator} no) { console.log('test'); }`
+          )
+        ).toThrow(
+          /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
+        );
+
+        expect(() =>
+          validator.validateCode(
+            `while("rawr" ${operator} "rawr") { console.log('test'); }`
+          )
+        ).toThrow(
+          /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
+        );
+
+        expect(() =>
+          validator.validateCode(
+            `while(true ${operator} true) { console.log('test'); }`
+          )
+        ).toThrow(
+          /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
+        );
+      });
     });
 
     it('should provide detailed error for for(;;) loops', () => {
