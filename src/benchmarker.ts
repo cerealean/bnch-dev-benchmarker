@@ -10,7 +10,6 @@ import {
   calculateStats,
   yieldControl,
   wrapUserCode,
-  secondsToMilliseconds as secondsToMilliseconds,
   megabytesToKilobytes,
 } from './utils.js';
 import { CodeValidator } from './code-validator.js';

@@ -49,13 +49,6 @@ export function calculateStats(samples: BenchmarkSample[]): BenchmarkStats {
 }
 
 /**
- * Sleep for a specified number of milliseconds
- */
-export function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-/**
  * Yield control to allow microtasks and other operations to run
  */
 export function yieldControl(): Promise<void> {
@@ -68,37 +61,6 @@ export function yieldControl(): Promise<void> {
       setTimeout(resolve, 0);
     }
   });
-}
-
-/**
- * Create a secure execution context with disabled globals
- */
-export function createSecureContext(disabledGlobals: string[] = []): string {
-  const defaultDisabled = [
-    'fetch',
-    'XMLHttpRequest',
-    'WebSocket',
-    'EventSource',
-    'importScripts',
-    'Worker',
-    'SharedWorker',
-    'ServiceWorker',
-    'navigator',
-    'location',
-    'history',
-    'localStorage',
-    'sessionStorage',
-    'indexedDB',
-    'crypto',
-    'subtle',
-  ];
-
-  const allDisabled = [...new Set([...defaultDisabled, ...disabledGlobals])];
-
-  return (
-    allDisabled.map((global) => `const ${global} = undefined;`).join('\n') +
-    '\n'
-  );
 }
 
 /**
@@ -130,13 +92,6 @@ export function wrapUserCode(code: string, timeout: number): string {
       });
     })();
   `;
-}
-
-/**
- * Convert seconds to milliseconds
- */
-export function secondsToMilliseconds(seconds: number): number {
-  return seconds * 1000;
 }
 
 /**
