@@ -17,7 +17,7 @@ export async function benchmark(
 ) {
   const { Benchmarker } = await import('./benchmarker.js');
   const benchmarker = new Benchmarker(config);
-  return benchmarker.benchmark(code);
+  return benchmarker.benchmark(code).finally(() => benchmarker.dispose());
 }
 
 /**
