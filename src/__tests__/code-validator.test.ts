@@ -439,6 +439,18 @@ eval('end')`;
             expectedCode: SecurityErrorCode.INFINITE_WHILE_LOOP,
           },
           {
+            code: 'while(!false) {}',
+            expectedCode: SecurityErrorCode.INFINITE_WHILE_LOOP,
+          },
+          {
+            code: 'while(!   false) {}',
+            expectedCode: SecurityErrorCode.INFINITE_WHILE_LOOP,
+          },
+          {
+            code: 'while(   !false  ) {}',
+            expectedCode: SecurityErrorCode.INFINITE_WHILE_LOOP,
+          },
+          {
             code: 'for(;;) {}',
             expectedCode: SecurityErrorCode.INFINITE_FOR_LOOP,
           },
