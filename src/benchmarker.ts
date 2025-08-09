@@ -171,6 +171,14 @@ export class Benchmarker {
     }
   }
 
+  dispose(): void {
+    this.abort();
+    if (this.worker) {
+      this.worker.terminate();
+      this.worker = null;
+    }
+  }
+
   /**
    * Run warmup iterations
    */
