@@ -168,48 +168,60 @@ export class TimeDuration {
    */
   toString(options: TimeDurationToStringOptions = {}): string {
     const decimalPlaces = options.decimalPlaces ?? 3;
+    const unit = options.units || this.getRelevantUnit();
+    const value = this.getValueForUnit(unit);
+    const abbreviation = this.getAbbreviationForUnit(unit);
 
-    if (options.units) {
-      switch (options.units) {
-        case 'seconds':
-          return `${this.seconds.toFixed(decimalPlaces)}s`;
-        case 'milliseconds':
-          return `${this.milliseconds.toFixed(decimalPlaces)}ms`;
-        case 'microseconds':
-          return `${this.microseconds.toFixed(decimalPlaces)}μs`;
-        case 'nanoseconds':
-          return `${this.nanoseconds.toFixed(decimalPlaces)}ns`;
-        case 'picoseconds':
-          return `${this.picoseconds.toFixed(decimalPlaces)}ps`;
-        case 'femtoseconds':
-          return `${this.femtoseconds.toFixed(decimalPlaces)}fs`;
-      }
-    }
+    return `${value.toFixed(decimalPlaces)}${abbreviation}`;
+  }
 
-    const relevantUnit = this.getRelevantUnitAbbr();
-    switch (relevantUnit) {
-      case 's':
-        return `${this.seconds.toFixed(decimalPlaces)}${relevantUnit}`;
-      case 'ms':
-        return `${this.milliseconds.toFixed(decimalPlaces)}${relevantUnit}`;
-      case 'μs':
-        return `${this.microseconds.toFixed(decimalPlaces)}${relevantUnit}`;
-      case 'ns':
-        return `${this.nanoseconds.toFixed(decimalPlaces)}${relevantUnit}`;
-      case 'ps':
-        return `${this.picoseconds.toFixed(decimalPlaces)}${relevantUnit}`;
+  private getRelevantUnit(): TimeDurationToStringOptions['units'] {
+    const abs = Math.abs(this._nanoseconds);
+    if (abs >= 1_000_000_000) return 'seconds';
+    if (abs >= 1_000_000) return 'milliseconds';
+    if (abs >= 1_000) return 'microseconds';
+    if (abs >= 1) return 'nanoseconds';
+    if (abs >= 0.001) return 'picoseconds';
+    return 'femtoseconds';
+  }
+
+  private getValueForUnit(unit: TimeDurationToStringOptions['units']): number {
+    switch (unit) {
+      case 'seconds':
+        return this.seconds;
+      case 'milliseconds':
+        return this.milliseconds;
+      case 'microseconds':
+        return this.microseconds;
+      case 'nanoseconds':
+        return this.nanoseconds;
+      case 'picoseconds':
+        return this.picoseconds;
+      case 'femtoseconds':
+        return this.femtoseconds;
       default:
-        return `${this.femtoseconds.toFixed(decimalPlaces)}${relevantUnit}`;
+        return this.nanoseconds;
     }
   }
 
-  private getRelevantUnitAbbr() {
-    const abs = Math.abs(this._nanoseconds);
-    if (abs >= 1_000_000_000) return 's';
-    if (abs >= 1_000_000) return 'ms';
-    if (abs >= 1_000) return 'μs';
-    if (abs >= 1) return 'ns';
-    if (abs >= 0.001) return 'ps';
-    return 'fs';
+  private getAbbreviationForUnit(
+    unit: TimeDurationToStringOptions['units']
+  ): string {
+    switch (unit) {
+      case 'seconds':
+        return 's';
+      case 'milliseconds':
+        return 'ms';
+      case 'microseconds':
+        return 'μs';
+      case 'nanoseconds':
+        return 'ns';
+      case 'picoseconds':
+        return 'ps';
+      case 'femtoseconds':
+        return 'fs';
+      default:
+        return 'ns';
+    }
   }
 }
