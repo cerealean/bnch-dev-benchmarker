@@ -245,7 +245,6 @@ export class Benchmarker {
         code,
         this.config.executionTimeout.milliseconds
       );
-      // @ts-ignore Errors around this eval are expected
       await eval(wrappedCode);
 
       const endTime = performance.now();

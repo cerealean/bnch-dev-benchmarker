@@ -8,6 +8,15 @@ const pkg = JSON.parse(readFileSync('./package.json', 'utf8'));
 
 export default {
   input: 'src/index.ts',
+  onwarn: function (warning, warn) {
+    // Suppress the 'EVAL' warning specifically
+    if (warning.code === 'EVAL') {
+      return; // Suppress the warning
+    }
+
+    // Pass through other warnings
+    warn(warning);
+  },
   output: [
     {
       file: pkg.main,
