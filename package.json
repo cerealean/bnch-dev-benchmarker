@@ -1,6 +1,6 @@
 {
   "name": "@bnch/benchmarker",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "A secure JavaScript benchmarking library with web worker isolation and performance.now() precision",
   "type": "module",
   "main": "dist/index.js",
