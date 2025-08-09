@@ -32,6 +32,7 @@ This is automatically provided by GitHub Actions, no setup required.
 The GitHub Actions workflow includes:
 
 ### **Test Job**
+
 - Runs on Node.js versions 18.x, 20.x, and 22.x
 - Installs dependencies
 - Runs linter (`npm run lint`)
@@ -40,16 +41,19 @@ The GitHub Actions workflow includes:
 - Runs acceptance tests (`npm run test:acceptance`)
 
 ### **Build Job**
+
 - Runs after tests pass
 - Builds the library (`npm run build`)
 - Uploads build artifacts
 
 ### **Publish Job**
+
 - Runs only on GitHub releases
 - Publishes to npm registry
 - Makes the package available for installation
 
 ### **Semantic Release Job**
+
 - Runs on pushes to main branch
 - Automatically determines version based on commit messages
 - Creates GitHub releases
@@ -60,6 +64,7 @@ The GitHub Actions workflow includes:
 The workflow supports two release methods:
 
 ### Manual Release (Recommended for first release)
+
 1. Create a GitHub release manually:
    - Go to your repository → Releases → "Create a new release"
    - Tag version: `v1.0.0` (or appropriate version)
@@ -68,12 +73,15 @@ The workflow supports two release methods:
    - Click "Publish release"
 
 ### Automatic Release (Using Semantic Versioning)
+
 Use conventional commit messages:
+
 - `feat:` - New features (minor version bump)
 - `fix:` - Bug fixes (patch version bump)
 - `feat!:` or `fix!:` - Breaking changes (major version bump)
 
 Examples:
+
 ```bash
 git commit -m "feat: add new benchmark configuration options"
 git commit -m "fix: resolve memory leak in worker isolation"
@@ -106,11 +114,11 @@ const config: BenchmarkConfiguration = {
     const result = arr.map(x => x * 2).filter(x => x > 500);
   `,
   iterations: 1000,
-  warmupIterations: 100
+  warmupIterations: 100,
 };
 
 // Run benchmark
-benchmarker.run(config).then(result => {
+benchmarker.run(config).then((result) => {
   console.log('Benchmark completed:', result);
 });
 ```
