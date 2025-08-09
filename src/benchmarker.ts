@@ -316,8 +316,8 @@ export class Benchmarker {
       significanceLevel > 0.7
         ? 'high'
         : significanceLevel > 0.4
-        ? 'medium'
-        : 'low';
+          ? 'medium'
+          : 'low';
 
     if (percentChange < 1) {
       return `Performance difference is negligible (${confidence} confidence)`;

@@ -4,22 +4,22 @@
 // Security context setup - disable dangerous globals
 const createSecureContext = (disabledGlobals = []) => {
   const defaultDisabled = [
-    "fetch",
-    "XMLHttpRequest",
-    "WebSocket",
-    "EventSource",
-    "importScripts",
-    "Worker",
-    "SharedWorker",
-    "ServiceWorker",
-    "navigator",
-    "location",
-    "history",
-    "localStorage",
-    "sessionStorage",
-    "indexedDB",
-    "crypto",
-    "subtle",
+    'fetch',
+    'XMLHttpRequest',
+    'WebSocket',
+    'EventSource',
+    'importScripts',
+    'Worker',
+    'SharedWorker',
+    'ServiceWorker',
+    'navigator',
+    'location',
+    'history',
+    'localStorage',
+    'sessionStorage',
+    'indexedDB',
+    'crypto',
+    'subtle',
   ];
 
   const allDisabled = [...new Set([...defaultDisabled, ...disabledGlobals])];
@@ -63,7 +63,7 @@ self.onmessage = function (e) {
           // Set up timeout
           timeoutId = setTimeout(() => {
             if (!completed) {
-              reject(new Error("Execution timeout"));
+              reject(new Error('Execution timeout'));
             }
           }, timeout);
 
