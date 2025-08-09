@@ -8,11 +8,11 @@ import {
 import {
   calculateStats,
   yieldControl,
-  validateCode,
   wrapUserCode,
   millisecondsFromSeconds as secondsToMilliseconds,
   kilobytesFromMegabytes,
 } from './utils.js';
+import { CodeValidator } from './code-validator.js';
 import { createBenchmarkWorker, executeInWorker } from './worker.js';
 
 /**
@@ -48,6 +48,7 @@ export class Benchmarker {
   private security: Required<SecurityConfig>;
   private abortController: AbortController | null = null;
   private worker: Worker | null = null;
+  private codeValidator: CodeValidator;
 
   constructor(
     config: Partial<BenchmarkConfig> = {},
@@ -55,6 +56,7 @@ export class Benchmarker {
   ) {
     this.config = { ...DEFAULT_CONFIG, ...config };
     this.security = { ...DEFAULT_SECURITY, ...security };
+    this.codeValidator = new CodeValidator();
   }
 
   /**
@@ -62,7 +64,7 @@ export class Benchmarker {
    */
   async benchmark(code: string): Promise<BenchmarkResult> {
     // Validate input
-    validateCode(code, this.config.maxCodeSize);
+    this.codeValidator.validateCode(code, this.config.maxCodeSize);
 
     // Set up abort controller
     this.abortController = new AbortController();
