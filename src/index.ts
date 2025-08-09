@@ -3,6 +3,7 @@ export { Benchmarker } from './benchmarker.js';
 export * from './types.js';
 export * from './utils.js';
 export * from './code-validator.js';
+export * from './dangerous-patterns.js';
 
 // Convenience functions
 export { createBenchmarkWorker } from './worker.js';

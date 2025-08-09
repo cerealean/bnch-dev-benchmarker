@@ -125,4 +125,4 @@ export const securityMessages = [
     SecurityErrorCode.PROMPT_USAGE,
     'prompt() is not allowed as it blocks execution and interferes with benchmarking timing',
   ],
-] as const;
+] as ReadonlyArray<[SecurityErrorCode, string]>;
