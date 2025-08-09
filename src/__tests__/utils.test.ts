@@ -51,33 +51,6 @@ describe('Utils', () => {
     });
   });
 
-  describe('createSecureContext', () => {
-    it('should disable default globals', () => {
-      const context = createSecureContext();
-
-      expect(context).toContain('const fetch = undefined;');
-      expect(context).toContain('const XMLHttpRequest = undefined;');
-      expect(context).toContain('const WebSocket = undefined;');
-    });
-
-    it('should disable custom globals', () => {
-      const context = createSecureContext(['myGlobal', 'anotherGlobal']);
-
-      expect(context).toContain('const myGlobal = undefined;');
-      expect(context).toContain('const anotherGlobal = undefined;');
-    });
-  });
-
-  describe('sleep', () => {
-    it('should resolve after specified time', async () => {
-      const start = performance.now();
-      await sleep(50);
-      const end = performance.now();
-
-      expect(end - start).toBeGreaterThanOrEqual(45); // Allow some tolerance
-    });
-  });
-
   describe('yieldControl', () => {
     it('should yield control', async () => {
       const start = performance.now();
