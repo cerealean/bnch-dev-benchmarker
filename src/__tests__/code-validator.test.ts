@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { CodeValidator } from '../code-validator.js';
 import { SecurityErrorCode } from '../security-error-codes.js';
+import { faker } from '@faker-js/faker';
 
 describe('CodeValidator', () => {
   let validator: CodeValidator;
@@ -433,17 +434,22 @@ eval('end')`;
 
       it('should provide specific error codes for each pattern type', () => {
         const patternTests = [
-          { code: 'fetch("url")', expectedCode: SecurityErrorCode.FETCH_USAGE },
+          {
+            code: `fetch("${faker.string.alpha({
+              length: { min: 5, max: 10 },
+            })}")`,
+            expectedCode: SecurityErrorCode.FETCH_USAGE,
+          },
           {
             code: 'new XMLHttpRequest()',
             expectedCode: SecurityErrorCode.XMLHTTPREQUEST_CONSTRUCTOR,
           },
           {
-            code: 'new WebSocket("ws://test")',
+            code: `new WebSocket("ws://${faker.internet.domainName()}")`,
             expectedCode: SecurityErrorCode.WEBSOCKET_CONSTRUCTOR,
           },
           {
-            code: 'new Worker("w.js")',
+            code: `new Worker("${faker.system.filePath()}")`,
             expectedCode: SecurityErrorCode.WORKER_CONSTRUCTOR,
           },
           {
@@ -451,11 +457,11 @@ eval('end')`;
             expectedCode: SecurityErrorCode.LOCALSTORAGE_USAGE,
           },
           {
-            code: 'alert("test")',
+            code: `alert("${faker.lorem.sentence()}")`,
             expectedCode: SecurityErrorCode.ALERT_USAGE,
           },
           {
-            code: 'requestAnimationFrame(f)',
+            code: `requestAnimationFrame(${faker.lorem.word()})`,
             expectedCode: SecurityErrorCode.REQUESTANIMATIONFRAME_USAGE,
           },
           {
@@ -479,7 +485,13 @@ eval('end')`;
             expectedCode: SecurityErrorCode.IMPORT_USAGE,
           },
           {
-            code: 'require("fs")',
+            code: `require("${faker.system.filePath()}")`,
+            expectedCode: SecurityErrorCode.REQUIRE_USAGE,
+          },
+          {
+            code: `require("${faker.string.alpha({
+              length: { min: 5, max: 15 },
+            })}")`,
             expectedCode: SecurityErrorCode.REQUIRE_USAGE,
           },
           {
@@ -499,7 +511,7 @@ eval('end')`;
             expectedCode: SecurityErrorCode.LOCATION_ACCESS,
           },
           {
-            code: 'console.log("test")',
+            code: `console.log("${faker.lorem.sentence()}")`,
             expectedCode: SecurityErrorCode.CONSOLE_USAGE,
           },
           {
@@ -519,15 +531,15 @@ eval('end')`;
             expectedCode: SecurityErrorCode.PROTOTYPE_POLLUTION,
           },
           {
-            code: 'Buffer.from("test")',
+            code: `Buffer.from("${faker.lorem.sentence()}")`,
             expectedCode: SecurityErrorCode.BUFFER_USAGE,
           },
           {
-            code: 'fs.readFile("test")',
+            code: `fs.readFile("${faker.system.filePath()}")`,
             expectedCode: SecurityErrorCode.FILESYSTEM_USAGE,
           },
           {
-            code: 'exec("ls")',
+            code: `exec("${faker.lorem.word()}")`,
             expectedCode: SecurityErrorCode.CHILD_PROCESS_USAGE,
           },
         ];
