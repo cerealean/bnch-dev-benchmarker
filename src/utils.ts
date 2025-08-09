@@ -1,4 +1,5 @@
 import { BenchmarkSample, BenchmarkStats } from './types.js';
+import { TimeDuration } from './time-duration.js';
 
 /**
  * Calculate statistical summary from benchmark samples
@@ -8,12 +9,13 @@ export function calculateStats(samples: BenchmarkSample[]): BenchmarkStats {
   const times = successfulSamples.map((s) => s.time);
 
   if (times.length === 0) {
+    const zeroDuration = TimeDuration.fromMilliseconds(0);
     return {
-      mean: 0,
-      median: 0,
-      standardDeviation: 0,
-      min: 0,
-      max: 0,
+      mean: zeroDuration,
+      median: zeroDuration,
+      standardDeviation: zeroDuration,
+      min: zeroDuration,
+      max: zeroDuration,
       successfulSamples: 0,
       failedSamples: samples.length,
       operationsPerSecond: 0,
@@ -34,11 +36,11 @@ export function calculateStats(samples: BenchmarkSample[]): BenchmarkStats {
   const standardDeviation = Math.sqrt(variance);
 
   return {
-    mean,
-    median,
-    standardDeviation,
-    min: Math.min(...times),
-    max: Math.max(...times),
+    mean: TimeDuration.fromMilliseconds(mean),
+    median: TimeDuration.fromMilliseconds(median),
+    standardDeviation: TimeDuration.fromMilliseconds(standardDeviation),
+    min: TimeDuration.fromMilliseconds(Math.min(...times)),
+    max: TimeDuration.fromMilliseconds(Math.max(...times)),
     successfulSamples: successfulSamples.length,
     failedSamples: samples.length - successfulSamples.length,
     operationsPerSecond: mean > 0 ? 1000 / mean : 0,

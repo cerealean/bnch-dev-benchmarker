@@ -58,9 +58,9 @@ try {
   const result = await benchmarker.benchmark('Math.random() * 1000');
   console.log('✅ Safe code executed successfully!');
   console.log(
-    `   Samples: ${result.samples.length}, Mean: ${result.stats.mean.toFixed(
-      3
-    )}ms`
+    `   Samples: ${
+      result.samples.length
+    }, Mean: ${result.stats.mean.milliseconds.toFixed(3)}ms`
   );
 } catch (error) {
   console.log('❌ Unexpected error:', error.message);

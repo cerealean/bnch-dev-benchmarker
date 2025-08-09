@@ -10,14 +10,14 @@ export interface BenchmarkConfig {
   minSamples?: number;
   /** Maximum number of samples to collect */
   maxSamples?: number;
-  /** Maximum time to spend benchmarking in milliseconds */
-  maxTime?: number;
+  /** Maximum time to spend benchmarking */
+  maxTime?: TimeDuration;
   /** Whether to yield between samples for better reliability */
   yieldBetweenSamples?: boolean;
   /** Maximum code size in bytes */
   maxCodeSize?: number;
-  /** Timeout for individual executions in milliseconds */
-  executionTimeout?: number;
+  /** Timeout for individual executions */
+  executionTimeout?: TimeDuration;
   /** Whether to run in a web worker for isolation */
   useWorker?: boolean;
 }
@@ -33,7 +33,7 @@ export interface SecurityConfig {
   /** Whether to disable network access */
   disableNetwork?: boolean;
   /** Maximum execution time per sample */
-  maxExecutionTime?: number;
+  maxExecutionTime?: TimeDuration;
   /** Maximum memory usage (not enforceable in browser, but for reference) */
   maxMemoryMB?: number;
 }
@@ -75,15 +75,15 @@ export interface BenchmarkResult {
  */
 export interface BenchmarkStats {
   /** Mean execution time */
-  mean: number;
+  mean: TimeDuration;
   /** Median execution time */
-  median: number;
+  median: TimeDuration;
   /** Standard deviation */
-  standardDeviation: number;
+  standardDeviation: TimeDuration;
   /** Minimum execution time */
-  min: number;
+  min: TimeDuration;
   /** Maximum execution time */
-  max: number;
+  max: TimeDuration;
   /** Number of successful samples */
   successfulSamples: number;
   /** Number of failed samples */

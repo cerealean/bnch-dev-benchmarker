@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { Benchmarker } from '../benchmarker.js';
+import { TimeDuration } from '../time-duration.js';
 
 describe('Benchmarker', () => {
   // Create a fresh benchmarker instance for each test
@@ -10,7 +11,7 @@ describe('Benchmarker', () => {
       warmupIterations: 2,
       minSamples: 5,
       maxSamples: 10,
-      maxTime: 1000,
+      maxTime: TimeDuration.fromMilliseconds(1000),
       useWorker: false, // Use main thread for tests
       ...config,
     });
@@ -28,7 +29,7 @@ describe('Benchmarker', () => {
               warmupIterations: 2,
               minSamples: 5,
               maxSamples: 10,
-              maxTime: 1000,
+              maxTime: TimeDuration.fromMilliseconds(1000),
               useWorker: false,
               ...config,
             },
@@ -51,7 +52,7 @@ describe('Benchmarker', () => {
         const result = await benchmarker.benchmark('Math.random()');
         expect(result.samples.length).toBeGreaterThanOrEqual(5);
         expect(result.stats.successfulSamples).toBeGreaterThan(0);
-        expect(result.stats.mean).toBeGreaterThan(0);
+        expect(result.stats.mean.milliseconds).toBeGreaterThan(0);
         expect(result.aborted).toBe(false);
       });
     });
@@ -113,7 +114,7 @@ describe('Benchmarker', () => {
         },
         {
           maxSamples: 1000,
-          maxTime: 10000,
+          maxTime: TimeDuration.fromMilliseconds(10000),
           useWorker: false,
         }
       );
@@ -165,12 +166,12 @@ describe('Benchmarker', () => {
           const result = await benchmarker.benchmark('Math.random()');
 
           expect(result.samples.length).toBeGreaterThan(0);
-          expect(result.stats.mean).toBeGreaterThan(0);
+          expect(result.stats.mean.milliseconds).toBeGreaterThan(0);
           expect(result.aborted).toBe(false);
         },
         {
           minSamples: 2,
-          maxTime: 1000,
+          maxTime: TimeDuration.fromMilliseconds(1000),
           useWorker: true,
         }
       );
@@ -448,7 +449,7 @@ setTimeout(() => {
             // For true timeout protection, use workers
           },
           {
-            executionTimeout: 100,
+            executionTimeout: TimeDuration.fromMilliseconds(100),
             useWorker: false,
             minSamples: 1,
             maxSamples: 1,
@@ -480,7 +481,7 @@ setTimeout(() => {
             expect(result.samples[0].error).toContain('timeout');
           },
           {
-            executionTimeout: 100,
+            executionTimeout: TimeDuration.fromMilliseconds(100),
             useWorker: true,
             minSamples: 1,
             maxSamples: 1,

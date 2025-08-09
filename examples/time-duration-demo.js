@@ -20,7 +20,9 @@ async function demonstrateTimeDuration() {
 
   console.log('\n=== Benchmark Results ===');
   console.log(`Samples collected: ${result.samples.length}`);
-  console.log(`Mean execution time: ${result.stats.mean.toFixed(3)}ms`);
+  console.log(
+    `Mean execution time: ${result.stats.mean.milliseconds.toFixed(3)}ms`
+  );
   console.log(
     `Operations per second: ${result.stats.operationsPerSecond.toFixed(0)}`
   );

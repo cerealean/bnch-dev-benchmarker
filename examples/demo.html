@@ -236,7 +236,7 @@
 
             log(`<h2>=== Benchmark Results ===</h2>
 Samples collected: ${result.samples.length}<br>
-Mean execution time: ${result.stats.mean.toFixed(3)}ms<br>
+Mean execution time: ${result.stats.mean.milliseconds.toFixed(3)}ms<br>
 Successful samples: ${result.stats.successfulSamples}`, 'success');
 
             // Demonstrate TimeDuration capabilities

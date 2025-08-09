@@ -25,22 +25,25 @@ npm install @bnch/benchmarker
 
 ## Quick Start
 
-```typescript
+````typescript
 import { Benchmarker, benchmark, compare } from '@bnch/benchmarker';
 
 // Simple benchmark
 const result = await benchmark('Math.random()');
-console.log(`Mean execution time: ${result.stats.mean}ms`);
+console.log(`Mean execution time: ${result.stats.mean.milliseconds}ms`);
 
 // Compare two code snippets
 const comparison = await compare('Math.random()', 'Math.random() * 2');
 console.log(comparison.summary);
 
 // Advanced usage with custom configuration
+```typescript
+import { Benchmarker, TimeDuration } from '@bnch/benchmarker';
+
 const benchmarker = new Benchmarker({
   warmupIterations: 10,
   minSamples: 20,
-  maxTime: 5000,
+  maxTime: TimeDuration.fromSeconds(5),
   useWorker: true,
 });
 
@@ -48,7 +51,9 @@ const advancedResult = await benchmarker.benchmark(`
   const arr = Array(1000).fill(0);
   arr.reduce((sum, val) => sum + val, 0);
 `);
-```
+````
+
+````
 
 ## Configuration
 
@@ -59,13 +64,13 @@ interface BenchmarkConfig {
   warmupIterations?: number; // Default: 5
   minSamples?: number; // Default: 10
   maxSamples?: number; // Default: 100
-  maxTime?: number; // Default: 10000ms
+  maxTime?: TimeDuration; // Default: 10 seconds
   yieldBetweenSamples?: boolean; // Default: true
   maxCodeSize?: number; // Default: 1MB
-  executionTimeout?: number; // Default: 1000ms
+  executionTimeout?: TimeDuration; // Default: 1 second
   useWorker?: boolean; // Default: true
 }
-```
+````
 
 ### Security Configuration
 
@@ -74,7 +79,7 @@ interface SecurityConfig {
   csp?: string; // Content Security Policy
   disabledGlobals?: string[]; // Additional globals to disable
   disableNetwork?: boolean; // Default: true
-  maxExecutionTime?: number; // Default: 1000ms
+  maxExecutionTime?: TimeDuration; // Default: 1 second
   maxMemoryMB?: number; // Default: 100MB (reference only)
 }
 ```
@@ -139,11 +144,11 @@ interface BenchmarkResult {
 }
 
 interface BenchmarkStats {
-  mean: number; // Average execution time
-  median: number; // Median execution time
-  standardDeviation: number; // Standard deviation
-  min: number; // Fastest execution
-  max: number; // Slowest execution
+  mean: TimeDuration; // Average execution time
+  median: TimeDuration; // Median execution time
+  standardDeviation: TimeDuration; // Standard deviation
+  min: TimeDuration; // Fastest execution
+  max: TimeDuration; // Slowest execution
   successfulSamples: number; // Successful runs
   failedSamples: number; // Failed runs
   operationsPerSecond: number; // Ops/sec (1000/mean)
@@ -211,8 +216,8 @@ const forLoopResult = await benchmark(`
   }
 `);
 
-console.log('Map:', mapResult.stats.mean, 'ms');
-console.log('For loop:', forLoopResult.stats.mean, 'ms');
+console.log('Map:', mapResult.stats.mean.milliseconds, 'ms');
+console.log('For loop:', forLoopResult.stats.mean.milliseconds, 'ms');
 ```
 
 ### A/B Testing
@@ -239,31 +244,34 @@ console.log(comparison.summary);
 
 ### Advanced Configuration
 
-```typescript
+````typescript
 import { Benchmarker } from '@bnch/benchmarker';
+
+```typescript
+import { Benchmarker, TimeDuration } from '@bnch/benchmarker';
 
 const benchmarker = new Benchmarker(
   {
     warmupIterations: 20,
     minSamples: 50,
     maxSamples: 200,
-    maxTime: 30000,
-    executionTimeout: 2000,
+    maxTime: TimeDuration.fromSeconds(30),
+    executionTimeout: TimeDuration.fromSeconds(2),
     useWorker: true,
   },
   {
     csp: "default-src 'none'; worker-src 'self'; script-src 'unsafe-eval';",
     disabledGlobals: ['localStorage', 'sessionStorage'],
-    maxExecutionTime: 2000,
+    maxExecutionTime: TimeDuration.fromSeconds(2),
   }
 );
+````
 
-const result = await benchmarker.benchmark(`
-  // Your performance-critical code here
+const result = await benchmarker.benchmark(`  // Your performance-critical code here
   const data = new Array(10000).fill(0).map(Math.random);
-  data.sort((a, b) => a - b);
-`);
-```
+  data.sort((a, b) => a - b);`);
+
+````
 
 ## Development
 
@@ -291,7 +299,7 @@ npm run lint
 
 # Type checking
 npm run typecheck
-```
+````
 
 ### Worker Script Development
 

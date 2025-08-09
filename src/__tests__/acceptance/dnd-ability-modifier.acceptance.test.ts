@@ -1,4 +1,5 @@
 import { Benchmarker } from '../../benchmarker.js';
+import { TimeDuration } from '../../time-duration.js';
 import { describe, it, expect, beforeEach } from 'vitest';
 
 describe('D&D Ability Modifier Benchmark - Acceptance Test', () => {
@@ -9,7 +10,7 @@ describe('D&D Ability Modifier Benchmark - Acceptance Test', () => {
       warmupIterations: 10,
       minSamples: 50,
       maxSamples: 200,
-      maxTime: 5000, // 5 seconds
+      maxTime: TimeDuration.fromSeconds(5), // 5 seconds
       yieldBetweenSamples: true,
       useWorker: false, // Disable worker for Node.js test environment
       maxCodeSize: 10240, // Increase code size limit to 10KB
@@ -80,17 +81,23 @@ describe('D&D Ability Modifier Benchmark - Acceptance Test', () => {
 
       expect(result).toBeDefined();
       expect(result.samples.length).toBeGreaterThan(0);
-      expect(result.stats.mean).toBeGreaterThan(0);
+      expect(result.stats.mean.milliseconds).toBeGreaterThan(0);
       expect(result.aborted).toBe(false);
 
       console.log('Calculation Approach Results:');
-      console.log(`  Mean time: ${result.stats.mean.toFixed(3)}ms`);
-      console.log(`  Median time: ${result.stats.median.toFixed(3)}ms`);
       console.log(
-        `  Standard deviation: ${result.stats.standardDeviation.toFixed(3)}ms`
+        `  Mean time: ${result.stats.mean.milliseconds.toFixed(3)}ms`
       );
-      console.log(`  Min time: ${result.stats.min.toFixed(3)}ms`);
-      console.log(`  Max time: ${result.stats.max.toFixed(3)}ms`);
+      console.log(
+        `  Median time: ${result.stats.median.milliseconds.toFixed(3)}ms`
+      );
+      console.log(
+        `  Standard deviation: ${result.stats.standardDeviation.milliseconds.toFixed(
+          3
+        )}ms`
+      );
+      console.log(`  Min time: ${result.stats.min.milliseconds.toFixed(3)}ms`);
+      console.log(`  Max time: ${result.stats.max.milliseconds.toFixed(3)}ms`);
       console.log(`  Samples: ${result.samples.length}`);
       console.log(
         `  Coefficient of variation: ${(
@@ -104,17 +111,23 @@ describe('D&D Ability Modifier Benchmark - Acceptance Test', () => {
 
       expect(result).toBeDefined();
       expect(result.samples.length).toBeGreaterThan(0);
-      expect(result.stats.mean).toBeGreaterThan(0);
+      expect(result.stats.mean.milliseconds).toBeGreaterThan(0);
       expect(result.aborted).toBe(false);
 
       console.log('Lookup Table Approach Results:');
-      console.log(`  Mean time: ${result.stats.mean.toFixed(3)}ms`);
-      console.log(`  Median time: ${result.stats.median.toFixed(3)}ms`);
       console.log(
-        `  Standard deviation: ${result.stats.standardDeviation.toFixed(3)}ms`
+        `  Mean time: ${result.stats.mean.milliseconds.toFixed(3)}ms`
       );
-      console.log(`  Min time: ${result.stats.min.toFixed(3)}ms`);
-      console.log(`  Max time: ${result.stats.max.toFixed(3)}ms`);
+      console.log(
+        `  Median time: ${result.stats.median.milliseconds.toFixed(3)}ms`
+      );
+      console.log(
+        `  Standard deviation: ${result.stats.standardDeviation.milliseconds.toFixed(
+          3
+        )}ms`
+      );
+      console.log(`  Min time: ${result.stats.min.milliseconds.toFixed(3)}ms`);
+      console.log(`  Max time: ${result.stats.max.milliseconds.toFixed(3)}ms`);
       console.log(`  Samples: ${result.samples.length}`);
       console.log(
         `  Coefficient of variation: ${(
@@ -136,14 +149,24 @@ describe('D&D Ability Modifier Benchmark - Acceptance Test', () => {
       expect(comparison.comparison).toBeDefined();
 
       console.log('BASELINE (Calculation):');
-      console.log(`  Mean: ${comparison.baseline.stats.mean.toFixed(3)}ms`);
-      console.log(`  Median: ${comparison.baseline.stats.median.toFixed(3)}ms`);
+      console.log(
+        `  Mean: ${comparison.baseline.stats.mean.milliseconds.toFixed(3)}ms`
+      );
+      console.log(
+        `  Median: ${comparison.baseline.stats.median.milliseconds.toFixed(
+          3
+        )}ms`
+      );
       console.log(`  Samples: ${comparison.baseline.samples.length}`);
 
       console.log('\\nCOMPARISON (Lookup Table):');
-      console.log(`  Mean: ${comparison.comparison.stats.mean.toFixed(3)}ms`);
       console.log(
-        `  Median: ${comparison.comparison.stats.median.toFixed(3)}ms`
+        `  Mean: ${comparison.comparison.stats.mean.milliseconds.toFixed(3)}ms`
+      );
+      console.log(
+        `  Median: ${comparison.comparison.stats.median.milliseconds.toFixed(
+          3
+        )}ms`
       );
       console.log(`  Samples: ${comparison.comparison.samples.length}`);
 
@@ -362,10 +385,14 @@ describe('D&D Ability Modifier Benchmark - Acceptance Test', () => {
       const comparison = await benchmarker.compare(calculationCode, lookupCode);
 
       console.log(
-        `Calculation mean: ${comparison.baseline.stats.mean.toFixed(4)}ms`
+        `Calculation mean: ${comparison.baseline.stats.mean.milliseconds.toFixed(
+          4
+        )}ms`
       );
       console.log(
-        `Lookup mean: ${comparison.comparison.stats.mean.toFixed(4)}ms`
+        `Lookup mean: ${comparison.comparison.stats.mean.milliseconds.toFixed(
+          4
+        )}ms`
       );
       console.log(
         `Performance difference: ${(
@@ -429,9 +456,11 @@ describe('D&D Ability Modifier Benchmark - Acceptance Test', () => {
       const cv = result.stats.coefficientOfVariation;
 
       console.log('\\n=== Calculation Consistency Test ===');
-      console.log(`Mean: ${result.stats.mean.toFixed(4)}ms`);
+      console.log(`Mean: ${result.stats.mean.milliseconds.toFixed(4)}ms`);
       console.log(
-        `Standard deviation: ${result.stats.standardDeviation.toFixed(4)}ms`
+        `Standard deviation: ${result.stats.standardDeviation.milliseconds.toFixed(
+          4
+        )}ms`
       );
       console.log(`Coefficient of variation: ${(cv * 100).toFixed(2)}%`);
 

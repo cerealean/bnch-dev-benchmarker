@@ -20,10 +20,10 @@ describe('Utils', () => {
 
       const stats = calculateStats(samples);
 
-      expect(stats.mean).toBe(30);
-      expect(stats.median).toBe(30);
-      expect(stats.min).toBe(10);
-      expect(stats.max).toBe(50);
+      expect(stats.mean.milliseconds).toBe(30);
+      expect(stats.median.milliseconds).toBe(30);
+      expect(stats.min.milliseconds).toBe(10);
+      expect(stats.max.milliseconds).toBe(50);
       expect(stats.successfulSamples).toBe(5);
       expect(stats.failedSamples).toBe(0);
     });
@@ -39,13 +39,13 @@ describe('Utils', () => {
 
       expect(stats.successfulSamples).toBe(2);
       expect(stats.failedSamples).toBe(1);
-      expect(stats.mean).toBe(20);
+      expect(stats.mean.milliseconds).toBe(20);
     });
 
     it('should handle empty samples', () => {
       const stats = calculateStats([]);
 
-      expect(stats.mean).toBe(0);
+      expect(stats.mean.milliseconds).toBe(0);
       expect(stats.successfulSamples).toBe(0);
       expect(stats.operationsPerSecond).toBe(0);
     });

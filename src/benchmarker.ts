@@ -23,10 +23,10 @@ const DEFAULT_CONFIG: Required<BenchmarkConfig> = {
   warmupIterations: 5,
   minSamples: 10,
   maxSamples: 100,
-  maxTime: secondsToMilliseconds(10),
+  maxTime: TimeDuration.fromSeconds(10),
   yieldBetweenSamples: true,
   maxCodeSize: megabytesToKilobytes(1),
-  executionTimeout: secondsToMilliseconds(1),
+  executionTimeout: TimeDuration.fromSeconds(1),
   useWorker: true,
 };
 
@@ -37,7 +37,7 @@ const DEFAULT_SECURITY: Required<SecurityConfig> = {
   csp: "default-src 'none'; script-src 'unsafe-eval'; worker-src 'self'; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'; form-action 'none';",
   disabledGlobals: [],
   disableNetwork: true,
-  maxExecutionTime: 1000,
+  maxExecutionTime: TimeDuration.fromSeconds(1),
   maxMemoryMB: 100,
 };
 
@@ -101,7 +101,7 @@ export class Benchmarker {
         // Check if we have enough samples and time constraints
         if (samples.length >= this.config.minSamples) {
           const elapsedTime = performance.now() - startTime;
-          if (elapsedTime >= this.config.maxTime) {
+          if (elapsedTime >= this.config.maxTime.milliseconds) {
             break;
           }
         }
@@ -142,8 +142,11 @@ export class Benchmarker {
     ]);
 
     const relativeDifference =
-      comparison.stats.mean > 0 && baseline.stats.mean > 0
-        ? (baseline.stats.mean - comparison.stats.mean) / baseline.stats.mean
+      comparison.stats.mean.milliseconds > 0 &&
+      baseline.stats.mean.milliseconds > 0
+        ? (baseline.stats.mean.milliseconds -
+            comparison.stats.mean.milliseconds) /
+          baseline.stats.mean.milliseconds
         : 0;
 
     // Simple statistical significance test (t-test approximation)
@@ -214,11 +217,14 @@ export class Benchmarker {
       throw new Error('Worker not initialized');
     }
 
-    const wrappedCode = wrapUserCode(code, this.config.executionTimeout);
+    const wrappedCode = wrapUserCode(
+      code,
+      this.config.executionTimeout.milliseconds
+    );
     const result = await executeInWorker(
       this.worker,
       wrappedCode,
-      this.config.executionTimeout,
+      this.config.executionTimeout.milliseconds,
       this.security.csp
     );
 
@@ -236,7 +242,10 @@ export class Benchmarker {
     const startTime = performance.now();
 
     try {
-      const wrappedCode = wrapUserCode(code, this.config.executionTimeout);
+      const wrappedCode = wrapUserCode(
+        code,
+        this.config.executionTimeout.milliseconds
+      );
       await eval(wrappedCode);
 
       const endTime = performance.now();
