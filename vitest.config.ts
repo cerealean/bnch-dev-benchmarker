@@ -6,6 +6,7 @@ export default defineConfig({
     environment: 'jsdom',
     sequence: {
       shuffle: true,
+      concurrent: true,
     },
     coverage: {
       reporter: ['text', 'json', 'html'],
