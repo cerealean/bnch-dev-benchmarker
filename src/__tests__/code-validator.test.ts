@@ -435,6 +435,30 @@ eval('end')`;
       it('should provide specific error codes for each pattern type', () => {
         const patternTests = [
           {
+            code: 'while(true) {}',
+            expectedCode: SecurityErrorCode.INFINITE_WHILE_LOOP,
+          },
+          {
+            code: 'for(;;) {}',
+            expectedCode: SecurityErrorCode.INFINITE_FOR_LOOP,
+          },
+          {
+            code: `eval("${faker.lorem.word()}")`,
+            expectedCode: SecurityErrorCode.EVAL_USAGE,
+          },
+          {
+            code: `new Function("${faker.lorem.word()}")`,
+            expectedCode: SecurityErrorCode.FUNCTION_CONSTRUCTOR,
+          },
+          {
+            code: 'setTimeout(() => {}, 100)',
+            expectedCode: SecurityErrorCode.SETTIMEOUT_USAGE,
+          },
+          {
+            code: 'setInterval(() => {}, 100)',
+            expectedCode: SecurityErrorCode.SETINTERVAL_USAGE,
+          },
+          {
             code: `fetch("${faker.string.alpha({
               length: { min: 5, max: 10 },
             })}")`,
