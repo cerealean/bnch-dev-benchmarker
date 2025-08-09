@@ -133,13 +133,13 @@ export function wrapUserCode(code: string, timeout: number): string {
 /**
  * Convert seconds to milliseconds
  */
-export function millisecondsFromSeconds(seconds: number): number {
+export function secondsToMilliseconds(seconds: number): number {
   return seconds * 1000;
 }
 
 /**
  * Convert megabytes to kilobytes
  */
-export function kilobytesFromMegabytes(megabytes: number): number {
+export function megabytesToKilobytes(megabytes: number): number {
   return megabytes * 1024;
 }

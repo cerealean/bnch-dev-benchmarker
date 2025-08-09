@@ -9,8 +9,8 @@ import {
   calculateStats,
   yieldControl,
   wrapUserCode,
-  millisecondsFromSeconds as secondsToMilliseconds,
-  kilobytesFromMegabytes,
+  secondsToMilliseconds as secondsToMilliseconds,
+  megabytesToKilobytes,
 } from './utils.js';
 import { CodeValidator } from './code-validator.js';
 import { createBenchmarkWorker, executeInWorker } from './worker.js';
@@ -24,7 +24,7 @@ const DEFAULT_CONFIG: Required<BenchmarkConfig> = {
   maxSamples: 100,
   maxTime: secondsToMilliseconds(10),
   yieldBetweenSamples: true,
-  maxCodeSize: kilobytesFromMegabytes(1),
+  maxCodeSize: megabytesToKilobytes(1),
   executionTimeout: secondsToMilliseconds(1),
   useWorker: true,
 };
