@@ -25,6 +25,7 @@
     "format": "prettier --write \"src/**/*.{ts,js}\" \"*.{ts,js,json,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,js}\" \"*.{ts,js,json,md}\"",
     "typecheck": "tsc --noEmit",
+    "type-check": "tsc --noEmit",
     "clean": "rimraf dist",
     "prepublishOnly": "npm run clean && npm run build && npm run test:unit",
     "release": "semantic-release"
@@ -41,10 +42,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bnch-dev/bnch-dev-benchmarker.git"
+    "url": "https://github.com/cerealean/bnch-dev-benchmarker.git"
   },
   "bugs": {
-    "url": "https://github.com/bnch-dev/bnch-dev-benchmarker/issues"
+    "url": "https://github.com/cerealean/bnch-dev-benchmarker/issues"
   },
   "homepage": "https://bnch.dev",
   "devDependencies": {

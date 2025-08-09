@@ -1,5 +1,9 @@
 # @bnch/benchmarker
 
+[![CI/CD Pipeline](https://github.com/cerealean/bnch-dev-benchmarker/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/cerealean/bnch-dev-benchmarker/actions/workflows/ci-cd.yml)
+[![npm version](https://badge.fury.io/js/@bnch%2Fbenchmarker.svg)](https://badge.fury.io/js/@bnch%2Fbenchmarker)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A secure JavaScript benchmarking library with web worker isolation and performance.now() precision.
 
 ## Features
