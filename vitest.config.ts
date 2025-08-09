@@ -11,5 +11,7 @@ export default defineConfig({
       reporter: ['text', 'json', 'html'],
       exclude: ['node_modules/', 'dist/', '**/*.d.ts'],
     },
+    // Setup file to configure console mocking
+    setupFiles: ['./src/__tests__/setup.ts'],
   },
 });

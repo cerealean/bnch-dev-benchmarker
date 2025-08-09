@@ -230,10 +230,10 @@ eval('end')`;
       }
     });
 
-    describe('network and communication patterns', () => {
+    describe.concurrent('network and communication patterns', () => {
       it('should reject fetch calls', () => {
         expect(() =>
-          validator.validateCode('fetch("https://api.example.com")')
+          validator.validateCode(`fetch("${faker.internet.url()}")`)
         ).toThrow(
           /Security Error \[FETCH_USAGE\].*fetch\(\) API is not allowed.*network requests/
         );

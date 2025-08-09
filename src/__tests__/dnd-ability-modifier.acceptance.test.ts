@@ -440,7 +440,7 @@ describe('D&D Ability Modifier Benchmark - Acceptance Test', () => {
       expect(cv).toBeLessThan(2.0);
 
       // Warn if variability is very high
-      if (cv > 1.5) {
+      if (cv > 1.6) {
         console.warn(
           `⚠️  High performance variability detected: ${(cv * 100).toFixed(2)}%`
         );
