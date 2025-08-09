@@ -46,6 +46,32 @@ describe('CodeValidator', () => {
       );
     });
 
+    it('should provide detailed error for obfuscated infinite loops', () => {
+      expect(() =>
+        validator.validateCode("while(!false) { console.log('test'); }")
+      ).toThrow(
+        /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
+      );
+
+      expect(() =>
+        validator.validateCode("while(!!true) { console.log('test'); }")
+      ).toThrow(
+        /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
+      );
+
+      expect(() =>
+        validator.validateCode("while(!!!false) { console.log('test'); }")
+      ).toThrow(
+        /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
+      );
+
+      expect(() =>
+        validator.validateCode("while(!!!!true) { console.log('test'); }")
+      ).toThrow(
+        /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
+      );
+    });
+
     it('should provide detailed error for for(;;) loops', () => {
       expect(() =>
         validator.validateCode("for(;;) { console.log('test'); }")
@@ -448,6 +474,18 @@ eval('end')`;
           },
           {
             code: 'while(   !false  ) {}',
+            expectedCode: SecurityErrorCode.INFINITE_WHILE_LOOP,
+          },
+          {
+            code: 'while(!!true) {}',
+            expectedCode: SecurityErrorCode.INFINITE_WHILE_LOOP,
+          },
+          {
+            code: 'while(!!!false) {}',
+            expectedCode: SecurityErrorCode.INFINITE_WHILE_LOOP,
+          },
+          {
+            code: 'while(!!!!true) {}',
             expectedCode: SecurityErrorCode.INFINITE_WHILE_LOOP,
           },
           {
