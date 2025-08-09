@@ -146,34 +146,167 @@ describe('TimeDuration', () => {
   });
 
   describe('string representation', () => {
-    it('should format seconds appropriately', () => {
-      const duration = TimeDuration.fromSeconds(2.5);
-      expect(duration.toString()).toBe('2.500s');
+    describe('automatic unit selection', () => {
+      it('should format seconds appropriately', () => {
+        const duration = TimeDuration.fromSeconds(2.5);
+        expect(duration.toString()).toBe('2.500s');
+      });
+
+      it('should format milliseconds appropriately', () => {
+        const duration = TimeDuration.fromMilliseconds(150.5);
+        expect(duration.toString()).toBe('150.500ms');
+      });
+
+      it('should format microseconds appropriately', () => {
+        const duration = TimeDuration.fromMicroseconds(150.5);
+        expect(duration.toString()).toBe('150.500μs');
+      });
+
+      it('should format nanoseconds appropriately', () => {
+        const duration = TimeDuration.fromNanoseconds(150.5);
+        expect(duration.toString()).toBe('150.500ns');
+      });
+
+      it('should format picoseconds appropriately', () => {
+        const duration = TimeDuration.fromPicoseconds(150.5);
+        expect(duration.toString()).toBe('150.500ps');
+      });
+
+      it('should format femtoseconds appropriately', () => {
+        const duration = TimeDuration.fromFemtoseconds(150.5);
+        expect(duration.toString()).toBe('150.500fs');
+      });
+
+      it('should choose appropriate unit at boundaries', () => {
+        // At the boundary between seconds and milliseconds
+        expect(TimeDuration.fromNanoseconds(1_000_000_000).toString()).toBe(
+          '1.000s'
+        );
+        expect(TimeDuration.fromNanoseconds(999_999_999).toString()).toBe(
+          '1000.000ms'
+        );
+
+        // At the boundary between milliseconds and microseconds
+        expect(TimeDuration.fromNanoseconds(1_000_000).toString()).toBe(
+          '1.000ms'
+        );
+        expect(TimeDuration.fromNanoseconds(999_999).toString()).toBe(
+          '999.999μs'
+        );
+
+        // At the boundary between microseconds and nanoseconds
+        expect(TimeDuration.fromNanoseconds(1_000).toString()).toBe('1.000μs');
+        expect(TimeDuration.fromNanoseconds(999).toString()).toBe('999.000ns');
+
+        // At the boundary between nanoseconds and picoseconds
+        expect(TimeDuration.fromNanoseconds(1).toString()).toBe('1.000ns');
+        expect(TimeDuration.fromNanoseconds(0.5).toString()).toBe('500.000ps');
+
+        // At the boundary between picoseconds and femtoseconds
+        expect(TimeDuration.fromNanoseconds(0.001).toString()).toBe('1.000ps');
+        expect(TimeDuration.fromNanoseconds(0.0005).toString()).toBe(
+          '500.000fs'
+        );
+      });
     });
 
-    it('should format milliseconds appropriately', () => {
-      const duration = TimeDuration.fromMilliseconds(150.5);
-      expect(duration.toString()).toBe('150.500ms');
+    describe('manual unit specification', () => {
+      it('should respect forced unit selection - seconds', () => {
+        const duration = TimeDuration.fromMilliseconds(1500);
+        expect(duration.toString({ units: 'seconds' })).toBe('1.500s');
+        expect(duration.toString({ units: 'milliseconds' })).toBe('1500.000ms');
+        expect(duration.toString({ units: 'microseconds' })).toBe(
+          '1500000.000μs'
+        );
+      });
+
+      it('should respect forced unit selection - milliseconds', () => {
+        const duration = TimeDuration.fromMicroseconds(1500);
+        expect(duration.toString({ units: 'milliseconds' })).toBe('1.500ms');
+        expect(duration.toString({ units: 'microseconds' })).toBe('1500.000μs');
+        expect(duration.toString({ units: 'nanoseconds' })).toBe(
+          '1500000.000ns'
+        );
+      });
+
+      it('should respect forced unit selection - microseconds', () => {
+        const duration = TimeDuration.fromNanoseconds(1500);
+        expect(duration.toString({ units: 'microseconds' })).toBe('1.500μs');
+        expect(duration.toString({ units: 'nanoseconds' })).toBe('1500.000ns');
+        expect(duration.toString({ units: 'picoseconds' })).toBe(
+          '1500000.000ps'
+        );
+      });
+
+      it('should respect forced unit selection - nanoseconds', () => {
+        const duration = TimeDuration.fromPicoseconds(1500);
+        expect(duration.toString({ units: 'nanoseconds' })).toBe('1.500ns');
+        expect(duration.toString({ units: 'picoseconds' })).toBe('1500.000ps');
+        expect(duration.toString({ units: 'femtoseconds' })).toBe(
+          '1500000.000fs'
+        );
+      });
+
+      it('should respect forced unit selection - picoseconds', () => {
+        const duration = TimeDuration.fromFemtoseconds(1500000);
+        expect(duration.toString({ units: 'picoseconds' })).toBe('1500.000ps');
+        expect(duration.toString({ units: 'femtoseconds' })).toBe(
+          '1500000.000fs'
+        );
+      });
+
+      it('should respect forced unit selection - femtoseconds', () => {
+        const duration = TimeDuration.fromFemtoseconds(1500);
+        expect(duration.toString({ units: 'femtoseconds' })).toBe('1500.000fs');
+      });
     });
 
-    it('should format microseconds appropriately', () => {
-      const duration = TimeDuration.fromMicroseconds(150.5);
-      expect(duration.toString()).toBe('150.500μs');
+    describe('custom decimal places', () => {
+      it('should support different decimal place counts', () => {
+        const duration = TimeDuration.fromMilliseconds(123.456789);
+
+        expect(duration.toString({ decimalPlaces: 0 })).toBe('123ms');
+        expect(duration.toString({ decimalPlaces: 1 })).toBe('123.5ms');
+        expect(duration.toString({ decimalPlaces: 2 })).toBe('123.46ms');
+        expect(duration.toString({ decimalPlaces: 3 })).toBe('123.457ms');
+        expect(duration.toString({ decimalPlaces: 6 })).toBe('123.456789ms');
+      });
+
+      it('should support custom decimal places with forced units', () => {
+        const duration = TimeDuration.fromMilliseconds(1234.5678);
+
+        expect(duration.toString({ units: 'seconds', decimalPlaces: 2 })).toBe(
+          '1.23s'
+        );
+        expect(
+          duration.toString({ units: 'microseconds', decimalPlaces: 1 })
+        ).toBe('1234567.8μs');
+        expect(
+          duration.toString({ units: 'nanoseconds', decimalPlaces: 0 })
+        ).toBe('1234567800ns');
+      });
+
+      it('should handle zero decimal places correctly', () => {
+        const duration = TimeDuration.fromMilliseconds(999.999);
+        expect(duration.toString({ decimalPlaces: 0 })).toBe('1000ms');
+      });
     });
 
-    it('should format nanoseconds appropriately', () => {
-      const duration = TimeDuration.fromNanoseconds(150.5);
-      expect(duration.toString()).toBe('150.500ns');
-    });
+    describe('default behavior', () => {
+      it('should use 3 decimal places by default', () => {
+        const duration = TimeDuration.fromMilliseconds(123.456789);
+        expect(duration.toString()).toBe('123.457ms');
+      });
 
-    it('should format picoseconds appropriately', () => {
-      const duration = TimeDuration.fromPicoseconds(150.5);
-      expect(duration.toString()).toBe('150.500ps');
-    });
+      it('should work with empty options object', () => {
+        const duration = TimeDuration.fromMilliseconds(123.456);
+        expect(duration.toString({})).toBe('123.456ms');
+      });
 
-    it('should format femtoseconds appropriately', () => {
-      const duration = TimeDuration.fromFemtoseconds(150.5);
-      expect(duration.toString()).toBe('150.500fs');
+      it('should work with undefined options', () => {
+        const duration = TimeDuration.fromMilliseconds(123.456);
+        expect(duration.toString(undefined)).toBe('123.456ms');
+      });
     });
   });
 

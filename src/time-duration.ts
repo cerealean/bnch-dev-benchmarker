@@ -164,52 +164,42 @@ export class TimeDuration {
 
   /**
    * Convert to a human-readable string with the most appropriate unit
+   * @param options Formatting options. If decimal places aren't provided, it will default to 3.
    */
+  toString(options: TimeDurationToStringOptions = {}): string {
+    const decimalPlaces = options.decimalPlaces ?? 3;
 
-  toString(
-    options: TimeDurationToStringOptions = { decimalPlaces: 3 }
-  ): string {
     if (options.units) {
       switch (options.units) {
         case 'seconds':
-          return `${this.seconds.toFixed(options.decimalPlaces)}s`;
+          return `${this.seconds.toFixed(decimalPlaces)}s`;
         case 'milliseconds':
-          return `${this.milliseconds.toFixed(options.decimalPlaces)}ms`;
+          return `${this.milliseconds.toFixed(decimalPlaces)}ms`;
         case 'microseconds':
-          return `${this.microseconds.toFixed(options.decimalPlaces)}μs`;
+          return `${this.microseconds.toFixed(decimalPlaces)}μs`;
         case 'nanoseconds':
-          return `${this.nanoseconds.toFixed(options.decimalPlaces)}ns`;
+          return `${this.nanoseconds.toFixed(decimalPlaces)}ns`;
         case 'picoseconds':
-          return `${this.picoseconds.toFixed(options.decimalPlaces)}ps`;
+          return `${this.picoseconds.toFixed(decimalPlaces)}ps`;
         case 'femtoseconds':
-          return `${this.femtoseconds.toFixed(options.decimalPlaces)}fs`;
+          return `${this.femtoseconds.toFixed(decimalPlaces)}fs`;
       }
     }
 
     const relevantUnit = this.getRelevantUnitAbbr();
     switch (relevantUnit) {
       case 's':
-        return `${this.seconds.toFixed(options.decimalPlaces)}${relevantUnit}`;
+        return `${this.seconds.toFixed(decimalPlaces)}${relevantUnit}`;
       case 'ms':
-        return `${this.milliseconds.toFixed(
-          options.decimalPlaces
-        )}${relevantUnit}`;
+        return `${this.milliseconds.toFixed(decimalPlaces)}${relevantUnit}`;
       case 'μs':
-        return `${this.microseconds.toFixed(
-          options.decimalPlaces
-        )}${relevantUnit}`;
+        return `${this.microseconds.toFixed(decimalPlaces)}${relevantUnit}`;
       case 'ns':
-        return `${this.nanoseconds.toFixed(
-          options.decimalPlaces
-        )}${relevantUnit}`;
+        return `${this.nanoseconds.toFixed(decimalPlaces)}${relevantUnit}`;
       case 'ps':
-        return `${this.picoseconds.toFixed(
-          options.decimalPlaces
-        )}${relevantUnit}`;
+        return `${this.picoseconds.toFixed(decimalPlaces)}${relevantUnit}`;
       default:
-        return `${this.femtoseconds.toFixed(
-          options.decimalPlaces
-        )}${relevantUnit}`;
+        return `${this.femtoseconds.toFixed(decimalPlaces)}${relevantUnit}`;
     }
   }
 
