@@ -13,12 +13,9 @@ export default defineConfig({
     },
     // Setup file to configure console mocking
     setupFiles: ['./src/__tests__/setup.ts'],
-    // Exclude acceptance tests from default test runs
-    exclude: [
-      '**/node_modules/**',
-      '**/dist/**',
-      '**/*.d.ts',
-      '**/acceptance/**',
-    ],
+    // Only run acceptance tests
+    include: ['**/acceptance/**/*.test.ts'],
+    // Longer timeout for acceptance tests
+    testTimeout: 30000,
   },
 });

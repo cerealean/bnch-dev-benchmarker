@@ -22,14 +22,14 @@ npm install @bnch/benchmarker
 ## Quick Start
 
 ```typescript
-import { Benchmarker, benchmark, compare } from "@bnch/benchmarker";
+import { Benchmarker, benchmark, compare } from '@bnch/benchmarker';
 
 // Simple benchmark
-const result = await benchmark("Math.random()");
+const result = await benchmark('Math.random()');
 console.log(`Mean execution time: ${result.stats.mean}ms`);
 
 // Compare two code snippets
-const comparison = await compare("Math.random()", "Math.random() * 2");
+const comparison = await compare('Math.random()', 'Math.random() * 2');
 console.log(comparison.summary);
 
 // Advanced usage with custom configuration
@@ -152,7 +152,7 @@ interface BenchmarkStats {
 ### Basic Performance Testing
 
 ```typescript
-import { benchmark } from "@bnch/benchmarker";
+import { benchmark } from '@bnch/benchmarker';
 
 // Test array methods
 const mapResult = await benchmark(`
@@ -168,14 +168,14 @@ const forLoopResult = await benchmark(`
   }
 `);
 
-console.log("Map:", mapResult.stats.mean, "ms");
-console.log("For loop:", forLoopResult.stats.mean, "ms");
+console.log('Map:', mapResult.stats.mean, 'ms');
+console.log('For loop:', forLoopResult.stats.mean, 'ms');
 ```
 
 ### A/B Testing
 
 ```typescript
-import { compare } from "@bnch/benchmarker";
+import { compare } from '@bnch/benchmarker';
 
 const comparison = await compare(
   // Version A: Object property access
@@ -187,7 +187,7 @@ const comparison = await compare(
   `
     const obj = { value: 42 };
     const { value } = obj;
-  `,
+  `
 );
 
 console.log(comparison.summary);
@@ -197,7 +197,7 @@ console.log(comparison.summary);
 ### Advanced Configuration
 
 ```typescript
-import { Benchmarker } from "@bnch/benchmarker";
+import { Benchmarker } from '@bnch/benchmarker';
 
 const benchmarker = new Benchmarker(
   {
@@ -210,9 +210,9 @@ const benchmarker = new Benchmarker(
   },
   {
     csp: "default-src 'none'; worker-src 'self'; script-src 'unsafe-eval';",
-    disabledGlobals: ["localStorage", "sessionStorage"],
+    disabledGlobals: ['localStorage', 'sessionStorage'],
     maxExecutionTime: 2000,
-  },
+  }
 );
 
 const result = await benchmarker.benchmark(`
@@ -231,8 +231,14 @@ npm install
 # Build the library
 npm run build
 
-# Run tests
+# Run unit tests (fast)
 npm test
+
+# Run acceptance tests (slower, real-world scenarios)
+npm run test:acceptance
+
+# Run all tests
+npm run test:all
 
 # Run tests in watch mode
 npm run test:watch

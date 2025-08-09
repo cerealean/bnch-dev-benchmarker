@@ -1,4 +1,4 @@
-import { Benchmarker } from '../benchmarker.js';
+import { Benchmarker } from '../../benchmarker.js';
 import { describe, it, expect, beforeEach } from 'vitest';
 
 describe('D&D Ability Modifier Benchmark - Acceptance Test', () => {
