@@ -71,7 +71,7 @@ export class Benchmarker {
 
     // Initialize worker if needed
     if (this.config.useWorker) {
-      this.worker = createBenchmarkWorker(this.security);
+      this.worker = createBenchmarkWorker();
     }
 
     const samples: BenchmarkSample[] = [];
