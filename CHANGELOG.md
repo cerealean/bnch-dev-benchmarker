@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/cerealean/bnch-dev-benchmarker/compare/v1.0.0...v1.0.1) (2025-08-09)
+
+
+### Bug Fixes
+
+* update README to clarify npm package availability ([4e619c9](https://github.com/cerealean/bnch-dev-benchmarker/commit/4e619c9c36520933e50fb405364786e5ee1693e8))
+
 # 1.0.0 (2025-08-09)
 
 - Initial release
