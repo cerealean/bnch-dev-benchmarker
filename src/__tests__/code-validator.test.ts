@@ -46,63 +46,50 @@ describe('CodeValidator', () => {
       );
     });
 
-    it('should provide detailed error for obfuscated infinite loops', () => {
-      expect(() =>
-        validator.validateCode("while(!false) { console.log('test'); }")
-      ).toThrow(
-        /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
-      );
+    describe('obfuscated infinite while loops', () => {
+      it('should detect negation-based obfuscation', () => {
+        const negationPatterns = [
+          'while(!false) { console.log("test"); }',
+          'while(!!true) { console.log("test"); }',
+          'while(!!!false) { console.log("test"); }',
+          'while(!!!!true) { console.log("test"); }',
+        ];
 
-      expect(() =>
-        validator.validateCode("while(!!true) { console.log('test'); }")
-      ).toThrow(
-        /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
-      );
+        negationPatterns.forEach((pattern) => {
+          expect(() => validator.validateCode(pattern)).toThrow(
+            /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
+          );
+        });
+      });
 
-      expect(() =>
-        validator.validateCode("while(!!!false) { console.log('test'); }")
-      ).toThrow(
-        /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
-      );
+      it('should detect equality-based obfuscation with == operator', () => {
+        const equalityPatterns = [
+          'while(yes == yes) { console.log("test"); }',
+          'while(no == no) { console.log("test"); }',
+          'while("rawr" == "rawr") { console.log("test"); }',
+          'while(true == true) { console.log("test"); }',
+        ];
 
-      expect(() =>
-        validator.validateCode("while(!!!!true) { console.log('test'); }")
-      ).toThrow(
-        /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
-      );
+        equalityPatterns.forEach((pattern) => {
+          expect(() => validator.validateCode(pattern)).toThrow(
+            /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
+          );
+        });
+      });
 
-      ['==', '==='].forEach((operator) => {
-        expect(() =>
-          validator.validateCode(
-            `while(yes ${operator} yes) { console.log('test'); }`
-          )
-        ).toThrow(
-          /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
-        );
+      it('should detect equality-based obfuscation with === operator', () => {
+        const strictEqualityPatterns = [
+          'while(yes === yes) { console.log("test"); }',
+          'while(no === no) { console.log("test"); }',
+          'while("rawr" === "rawr") { console.log("test"); }',
+          'while(true === true) { console.log("test"); }',
+        ];
 
-        expect(() =>
-          validator.validateCode(
-            `while(no ${operator} no) { console.log('test'); }`
-          )
-        ).toThrow(
-          /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
-        );
-
-        expect(() =>
-          validator.validateCode(
-            `while("rawr" ${operator} "rawr") { console.log('test'); }`
-          )
-        ).toThrow(
-          /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
-        );
-
-        expect(() =>
-          validator.validateCode(
-            `while(true ${operator} true) { console.log('test'); }`
-          )
-        ).toThrow(
-          /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
-        );
+        strictEqualityPatterns.forEach((pattern) => {
+          expect(() => validator.validateCode(pattern)).toThrow(
+            /Security Error \[INFINITE_WHILE_LOOP\].*Infinite while loops.*can cause the system to freeze/
+          );
+        });
       });
     });
 
