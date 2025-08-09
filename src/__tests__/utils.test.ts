@@ -1,10 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  calculateStats,
-  createSecureContext,
-  sleep,
-  yieldControl,
-} from '../utils.js';
+import { calculateStats, yieldControl } from '../utils.js';
 import { BenchmarkSample } from '../types.js';
 
 describe('Utils', () => {
