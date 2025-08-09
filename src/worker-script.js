@@ -28,7 +28,7 @@ const createSecureContext = (disabledGlobals = []) => {
   allDisabled.forEach((global) => {
     try {
       self[global] = undefined;
-    } catch (e) {
+    } catch {
       // Some globals might be read-only, ignore those errors
     }
   });
