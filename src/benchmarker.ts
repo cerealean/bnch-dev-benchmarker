@@ -5,6 +5,7 @@ import {
   BenchmarkSample,
   BenchmarkComparison,
 } from './types.js';
+import { TimeDuration } from './time-duration.js';
 import {
   calculateStats,
   yieldControl,
@@ -261,7 +262,8 @@ export class Benchmarker {
     startTime: number,
     aborted: boolean
   ): BenchmarkResult {
-    const totalTime = performance.now() - startTime;
+    const totalTimeMs = performance.now() - startTime;
+    const totalTime = TimeDuration.fromMilliseconds(totalTimeMs);
     const stats = calculateStats(samples);
 
     return {

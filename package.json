@@ -12,6 +12,8 @@
   "scripts": {
     "build": "rollup -c",
     "dev": "rollup -c -w",
+    "demo": "npm run build && node examples/browser-demo.js",
+    "demo:simple": "npm run build && node examples/time-duration-demo.js",
     "test": "npm run build && vitest run",
     "test:unit": "npm run build && vitest run",
     "test:acceptance": "npm run build && vitest run --config vitest.acceptance.config.ts",
@@ -65,6 +67,7 @@
     "cross-env": "^10.0.0",
     "eslint": "^8.56.0",
     "jsdom": "^26.1.0",
+    "puppeteer": "^24.16.0",
     "rimraf": "^5.0.5",
     "rollup": "^4.10.0",
     "rollup-plugin-copy": "^3.5.0",

@@ -1,5 +1,6 @@
 // Main exports
 export { Benchmarker } from './benchmarker.js';
+export { TimeDuration } from './time-duration.js';
 export * from './types.js';
 export * from './utils.js';
 export * from './code-validator.js';

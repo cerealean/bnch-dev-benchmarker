@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TimeDuration Demo</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+        }
+
+        .section {
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 3px solid #007acc;
+            background-color: #252526;
+        }
+
+        .output {
+            background-color: #2d2d30;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            white-space: pre-line;
+        }
+
+        h1,
+        h2 {
+            color: #569cd6;
+        }
+
+        .success {
+            color: #4ec9b0;
+        }
+
+        .warning {
+            color: #ffd700;
+        }
+
+        .error {
+            color: #f44747;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🕐 TimeDuration Demo</h1>
+    <div id="output"></div>
+
+    <script type="module">
+        // Include the TimeDuration class directly
+        class TimeDuration {
+            constructor(nanoseconds) {
+                this._nanoseconds = nanoseconds;
+            }
+
+            static fromSeconds(seconds) {
+                return new TimeDuration(seconds * 1_000_000_000);
+            }
+
+            static fromMilliseconds(milliseconds) {
+                return new TimeDuration(milliseconds * 1_000_000);
+            }
+
+            static fromMicroseconds(microseconds) {
+                return new TimeDuration(microseconds * 1_000);
+            }
+
+            static fromNanoseconds(nanoseconds) {
+                return new TimeDuration(nanoseconds);
+            }
+
+            static fromPicoseconds(picoseconds) {
+                return new TimeDuration(picoseconds / 1_000);
+            }
+
+            static fromFemtoseconds(femtoseconds) {
+                return new TimeDuration(femtoseconds / 1_000_000);
+            }
+
+            get seconds() {
+                return this._nanoseconds / 1_000_000_000;
+            }
+
+            get milliseconds() {
+                return this._nanoseconds / 1_000_000;
+            }
+
+            get microseconds() {
+                return this._nanoseconds / 1_000;
+            }
+
+            get nanoseconds() {
+                return this._nanoseconds;
+            }
+
+            get picoseconds() {
+                return this._nanoseconds * 1_000;
+            }
+
+            get femtoseconds() {
+                return this._nanoseconds * 1_000_000;
+            }
+
+            add(other) {
+                return new TimeDuration(this._nanoseconds + other._nanoseconds);
+            }
+
+            subtract(other) {
+                return new TimeDuration(this._nanoseconds - other._nanoseconds);
+            }
+
+            multiply(scalar) {
+                return new TimeDuration(this._nanoseconds * scalar);
+            }
+
+            divide(scalar) {
+                return new TimeDuration(this._nanoseconds / scalar);
+            }
+
+            compare(other) {
+                return this._nanoseconds - other._nanoseconds;
+            }
+
+            equals(other) {
+                return this._nanoseconds === other._nanoseconds;
+            }
+
+            isGreaterThan(other) {
+                return this._nanoseconds > other._nanoseconds;
+            }
+
+            isLessThan(other) {
+                return this._nanoseconds < other._nanoseconds;
+            }
+
+            toString() {
+                const abs = Math.abs(this._nanoseconds);
+
+                if (abs >= 1_000_000_000) {
+                    return `${this.seconds.toFixed(3)}s`;
+                } else if (abs >= 1_000_000) {
+                    return `${this.milliseconds.toFixed(3)}ms`;
+                } else if (abs >= 1_000) {
+                    return `${this.microseconds.toFixed(3)}μs`;
+                } else if (abs >= 1) {
+                    return `${this.nanoseconds.toFixed(3)}ns`;
+                } else if (abs >= 0.001) {
+                    return `${this.picoseconds.toFixed(3)}ps`;
+                } else {
+                    return `${this.femtoseconds.toFixed(3)}fs`;
+                }
+            }
+
+            toJSON() {
+                return this.milliseconds;
+            }
+
+            static fromJSON(milliseconds) {
+                return TimeDuration.fromMilliseconds(milliseconds);
+            }
+        }
+
+        // Simple benchmarker for demo purposes
+        class SimpleBenchmarker {
+            async benchmark(code, iterations = 10) {
+                const samples = [];
+                const startTime = performance.now();
+
+                for (let i = 0; i < iterations; i++) {
+                    const sampleStart = performance.now();
+                    try {
+                        await eval(`(async () => { ${code} })()`);
+                        const sampleEnd = performance.now();
+                        samples.push({
+                            time: sampleEnd - sampleStart,
+                            success: true
+                        });
+                    } catch (error) {
+                        const sampleEnd = performance.now();
+                        samples.push({
+                            time: sampleEnd - sampleStart,
+                            success: false,
+                            error: error.message
+                        });
+                    }
+                }
+
+                const totalTimeMs = performance.now() - startTime;
+                const successfulSamples = samples.filter(s => s.success);
+                const times = successfulSamples.map(s => s.time);
+                const mean = times.reduce((sum, time) => sum + time, 0) / times.length;
+
+                return {
+                    samples,
+                    stats: {
+                        mean,
+                        successfulSamples: successfulSamples.length,
+                        failedSamples: samples.length - successfulSamples.length
+                    },
+                    totalTime: TimeDuration.fromMilliseconds(totalTimeMs)
+                };
+            }
+        }
+
+        // Demo functions
+        function log(message, className = '') {
+            const output = document.getElementById('output');
+            const div = document.createElement('div');
+            div.className = `section ${className}`;
+            div.innerHTML = `<div class="output">${message}</div>`;
+            output.appendChild(div);
+            console.log(message.replace(/<br>/g, '\n'));
+        }
+
+        async function demonstrateTimeDuration() {
+            log('=== TimeDuration Demo ===', 'success');
+
+            // Create a simple benchmarker
+            const benchmarker = new SimpleBenchmarker();
+
+            // Simple benchmark
+            log('Running benchmark...');
+            const result = await benchmarker.benchmark(`
+                // Simple array operations
+                const arr = Array(1000).fill(0).map((_, i) => i);
+                const doubled = arr.map(x => x * 2);
+                const sum = doubled.reduce((a, b) => a + b, 0);
+            `, 5);
+
+            log(`<h2>=== Benchmark Results ===</h2>
+Samples collected: ${result.samples.length}<br>
+Mean execution time: ${result.stats.mean.toFixed(3)}ms<br>
+Successful samples: ${result.stats.successfulSamples}`, 'success');
+
+            // Demonstrate TimeDuration capabilities
+            log(`<h2>=== TimeDuration Capabilities ===</h2>
+Total benchmark time: <strong>${result.totalTime.toString()}</strong><br><br>
+<strong>Same duration in different units:</strong><br>
+  Seconds: ${result.totalTime.seconds.toFixed(6)}<br>
+  Milliseconds: ${result.totalTime.milliseconds.toFixed(3)}<br>
+  Microseconds: ${result.totalTime.microseconds.toFixed(0)}<br>
+  Nanoseconds: ${result.totalTime.nanoseconds.toFixed(0)}<br>
+  Picoseconds: ${result.totalTime.picoseconds.toFixed(0)}<br>
+  Femtoseconds: ${result.totalTime.femtoseconds.toFixed(0)}`);
+
+            // Create custom durations
+            const oneSecond = TimeDuration.fromSeconds(1);
+            const halfSecond = TimeDuration.fromMilliseconds(500);
+            const oneMicrosecond = TimeDuration.fromMicroseconds(1);
+
+            log(`<h2>=== Creating Custom Durations ===</h2>
+One second: ${oneSecond.toString()}<br>
+Half second: ${halfSecond.toString()}<br>
+One microsecond: ${oneMicrosecond.toString()}`);
+
+            // Arithmetic operations
+            const combined = oneSecond.add(halfSecond);
+            const difference = oneSecond.subtract(halfSecond);
+            const doubled = halfSecond.multiply(2);
+
+            log(`<h2>=== Duration Arithmetic ===</h2>
+1s + 500ms = ${combined.toString()}<br>
+1s - 500ms = ${difference.toString()}<br>
+500ms × 2 = ${doubled.toString()}`);
+
+            // Comparisons
+            log(`<h2>=== Duration Comparisons ===</h2>
+Is 1s > 500ms? ${oneSecond.isGreaterThan(halfSecond)}<br>
+Is 500ms < 1s? ${halfSecond.isLessThan(oneSecond)}<br>
+Is 500ms × 2 = 1s? ${doubled.equals(oneSecond)}`);
+
+            // Performance comparison
+            let performanceMessage = '';
+            if (result.totalTime.isGreaterThan(TimeDuration.fromSeconds(1))) {
+                performanceMessage = 'This benchmark took more than a second to complete';
+            } else if (result.totalTime.isGreaterThan(TimeDuration.fromMilliseconds(100))) {
+                performanceMessage = 'This benchmark completed in a reasonable time';
+            } else {
+                performanceMessage = 'This benchmark completed very quickly';
+            }
+
+            log(`<h2>=== Performance Context ===</h2>
+${performanceMessage}`);
+
+            // Precision demonstration
+            const veryFast = TimeDuration.fromNanoseconds(1234.567);
+            const ultraFast = TimeDuration.fromPicoseconds(987.654);
+
+            log(`<h2>=== Precision Examples ===</h2>
+<strong>Nanosecond precision:</strong> ${veryFast.toString()}<br>
+  As nanoseconds: ${veryFast.nanoseconds}<br>
+  As picoseconds: ${veryFast.picoseconds}<br><br>
+<strong>Picosecond precision:</strong> ${ultraFast.toString()}<br>
+  As picoseconds: ${ultraFast.picoseconds}<br>
+  As femtoseconds: ${ultraFast.femtoseconds}`);
+
+            // Web Worker test (if available)
+            if (typeof Worker !== 'undefined') {
+                log(`<h2>=== Web Worker Support ===</h2>
+✅ Web Workers are available in this environment!<br>
+This means the full benchmarker with worker isolation can be used.`, 'success');
+            } else {
+                log(`<h2>=== Web Worker Support ===</h2>
+❌ Web Workers are not available in this environment.<br>
+The benchmarker will fall back to main thread execution.`, 'warning');
+            }
+
+            log('<h2>=== Demo Complete ===</h2>', 'success');
+        }
+
+        // Run the demonstration
+        demonstrateTimeDuration().catch(error => {
+            log(`Error: ${error.message}`, 'error');
+            console.error(error);
+        });
+    </script>
+</body>
+
+</html>

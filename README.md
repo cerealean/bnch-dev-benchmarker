@@ -134,7 +134,7 @@ interface BenchmarkResult {
   stats: BenchmarkStats; // Statistical summary
   config: BenchmarkConfig; // Configuration used
   security: SecurityConfig; // Security settings
-  totalTime: number; // Total benchmark time
+  totalTime: TimeDuration; // Total benchmark time with multiple unit access
   aborted: boolean; // Whether aborted
 }
 
@@ -149,6 +149,45 @@ interface BenchmarkStats {
   operationsPerSecond: number; // Ops/sec (1000/mean)
   coefficientOfVariation: number; // Reliability measure
 }
+```
+
+### TimeDuration Class
+
+The `TimeDuration` class provides precise time measurements with multiple unit conversions:
+
+```typescript
+import { TimeDuration } from '@bnch/benchmarker';
+
+// Create from different units
+const duration1 = TimeDuration.fromSeconds(1.5);
+const duration2 = TimeDuration.fromMilliseconds(1500);
+const duration3 = TimeDuration.fromMicroseconds(1_500_000);
+
+// Access in any unit
+console.log(duration1.seconds); // 1.5
+console.log(duration1.milliseconds); // 1500
+console.log(duration1.microseconds); // 1500000
+console.log(duration1.nanoseconds); // 1500000000
+console.log(duration1.picoseconds); // 1500000000000
+console.log(duration1.femtoseconds); // 1500000000000000
+
+// Arithmetic operations
+const sum = duration1.add(duration2);
+const diff = duration1.subtract(duration2);
+const scaled = duration1.multiply(2);
+
+// Comparisons
+if (duration1.isGreaterThan(duration2)) {
+  console.log('duration1 is longer');
+}
+
+// Human-readable formatting
+console.log(duration1.toString()); // "1.500s"
+
+// Usage with benchmark results
+const result = await benchmark('/* your code */');
+console.log(`Total time: ${result.totalTime.toString()}`);
+console.log(`In microseconds: ${result.totalTime.microseconds}`);
 ```
 
 ## Examples

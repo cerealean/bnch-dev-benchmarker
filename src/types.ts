@@ -1,3 +1,5 @@
+import { TimeDuration } from './time-duration.js';
+
 /**
  * Configuration options for the benchmarker
  */
@@ -63,7 +65,7 @@ export interface BenchmarkResult {
   /** Security configuration used */
   security: SecurityConfig;
   /** Total time spent benchmarking */
-  totalTime: number;
+  totalTime: TimeDuration;
   /** Whether the benchmark was aborted */
   aborted: boolean;
 }
