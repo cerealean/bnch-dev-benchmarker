@@ -48,6 +48,9 @@
     "url": "https://github.com/cerealean/bnch-dev-benchmarker/issues"
   },
   "homepage": "https://bnch.dev",
+  "publishConfig": {
+    "access": "public"
+  },
   "devDependencies": {
     "@faker-js/faker": "^9.9.0",
     "@rollup/plugin-commonjs": "^25.0.7",
