@@ -136,4 +136,92 @@ export const dangerousPatterns: DangerousPattern[] = [
     pattern: /prompt\s*\(/gi,
     code: SecurityErrorCode.PROMPT_USAGE,
   },
+  {
+    pattern: /\bhistory\s*\./gi,
+    code: SecurityErrorCode.HISTORY_USAGE,
+  },
+  {
+    pattern: /\bnavigator\s*\./gi,
+    code: SecurityErrorCode.NAVIGATOR_USAGE,
+  },
+  {
+    pattern: /\bimport\s*\(/gi,
+    code: SecurityErrorCode.IMPORT_USAGE,
+  },
+  {
+    pattern: /\brequire\s*\(/gi,
+    code: SecurityErrorCode.REQUIRE_USAGE,
+  },
+  {
+    pattern: /\binclude\s*\(/gi,
+    code: SecurityErrorCode.INCLUDE_USAGE,
+  },
+  {
+    pattern: /\bglobal\s*\./gi,
+    code: SecurityErrorCode.GLOBAL_ACCESS,
+  },
+  {
+    pattern: /\bwindow\s*\./gi,
+    code: SecurityErrorCode.WINDOW_ACCESS,
+  },
+  {
+    pattern: /\bdocument\s*\./gi,
+    code: SecurityErrorCode.DOCUMENT_ACCESS,
+  },
+  {
+    pattern: /\blocation\s*\./gi,
+    code: SecurityErrorCode.LOCATION_ACCESS,
+  },
+  {
+    pattern: /\bconsole\s*\./gi,
+    code: SecurityErrorCode.CONSOLE_USAGE,
+  },
+  {
+    pattern: /\bdebugger\b/gi,
+    code: SecurityErrorCode.DEBUGGER_USAGE,
+  },
+  {
+    pattern: /\bwith\s*\(/gi,
+    code: SecurityErrorCode.WITH_STATEMENT,
+  },
+  {
+    pattern: /delete\s+.*\.(prototype|constructor|__proto__)/gi,
+    code: SecurityErrorCode.DELETE_OPERATOR,
+  },
+  {
+    pattern: /__proto__\s*=/gi,
+    code: SecurityErrorCode.PROTOTYPE_POLLUTION,
+  },
+  {
+    pattern: /\.(prototype|constructor)\s*=\s*null/gi,
+    code: SecurityErrorCode.PROTOTYPE_POLLUTION,
+  },
+  {
+    pattern: /\bBuffer\s*\./gi,
+    code: SecurityErrorCode.BUFFER_USAGE,
+  },
+  {
+    pattern: /\bfs\s*\./gi,
+    code: SecurityErrorCode.FILESYSTEM_USAGE,
+  },
+  {
+    pattern: /require\s*\(\s*['"`]fs['"`]/gi,
+    code: SecurityErrorCode.FILESYSTEM_USAGE,
+  },
+  {
+    pattern: /require\s*\(\s*['"`]path['"`]/gi,
+    code: SecurityErrorCode.FILESYSTEM_USAGE,
+  },
+  {
+    pattern: /require\s*\(\s*['"`]child_process['"`]/gi,
+    code: SecurityErrorCode.CHILD_PROCESS_USAGE,
+  },
+  {
+    pattern: /\bexec\s*\(/gi,
+    code: SecurityErrorCode.CHILD_PROCESS_USAGE,
+  },
+  {
+    pattern: /\bspawn\s*\(/gi,
+    code: SecurityErrorCode.CHILD_PROCESS_USAGE,
+  },
 ];

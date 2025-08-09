@@ -125,4 +125,72 @@ export const securityMessages = [
     SecurityErrorCode.PROMPT_USAGE,
     'prompt() is not allowed as it blocks execution and interferes with benchmarking timing',
   ],
+  [
+    SecurityErrorCode.HISTORY_USAGE,
+    'history object access is not allowed as it can manipulate browser navigation and poses security risks',
+  ],
+  [
+    SecurityErrorCode.NAVIGATOR_USAGE,
+    'navigator object access is not allowed as it can fingerprint the environment and cause timing variations',
+  ],
+  [
+    SecurityErrorCode.IMPORT_USAGE,
+    'Dynamic import() is not allowed as it can load external modules and bypass security restrictions',
+  ],
+  [
+    SecurityErrorCode.REQUIRE_USAGE,
+    'require() is not allowed as it can load external modules and bypass security restrictions',
+  ],
+  [
+    SecurityErrorCode.INCLUDE_USAGE,
+    'include statements are not allowed as they can load external code and pose security risks',
+  ],
+  [
+    SecurityErrorCode.GLOBAL_ACCESS,
+    'global object access is not allowed as it can access and modify global scope variables',
+  ],
+  [
+    SecurityErrorCode.WINDOW_ACCESS,
+    'window object access is not allowed as it provides access to the global browser context',
+  ],
+  [
+    SecurityErrorCode.DOCUMENT_ACCESS,
+    'document object access is not allowed as it provides DOM manipulation capabilities',
+  ],
+  [
+    SecurityErrorCode.LOCATION_ACCESS,
+    'location object access is not allowed as it can manipulate page navigation and URLs',
+  ],
+  [
+    SecurityErrorCode.CONSOLE_USAGE,
+    'console access is not allowed as it can interfere with benchmarking output and timing',
+  ],
+  [
+    SecurityErrorCode.DEBUGGER_USAGE,
+    'debugger statements are not allowed as they can halt execution and interfere with benchmarking',
+  ],
+  [
+    SecurityErrorCode.WITH_STATEMENT,
+    'with statements are not allowed as they can modify scope chains and pose security risks',
+  ],
+  [
+    SecurityErrorCode.DELETE_OPERATOR,
+    'delete operator on critical objects is not allowed as it can cause prototype pollution',
+  ],
+  [
+    SecurityErrorCode.PROTOTYPE_POLLUTION,
+    'Prototype pollution attempts are not allowed as they can compromise object security',
+  ],
+  [
+    SecurityErrorCode.BUFFER_USAGE,
+    'Buffer access is not allowed as it can manipulate raw memory and poses security risks',
+  ],
+  [
+    SecurityErrorCode.FILESYSTEM_USAGE,
+    'File system access is not allowed as it can read/write files and poses security risks',
+  ],
+  [
+    SecurityErrorCode.CHILD_PROCESS_USAGE,
+    'Child process spawning is not allowed as it can execute system commands and bypass security',
+  ],
 ] as ReadonlyArray<[SecurityErrorCode, string]>;

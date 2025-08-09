@@ -1,6 +1,6 @@
 import { SecurityErrorCode } from './security-error-codes';
 import { securityMessages } from './security-messages';
-import { DangerousPattern, dangerousPatterns } from './dangerous-patterns';
+import { dangerousPatterns } from './dangerous-patterns';
 
 /**
  * Code validator for ensuring safe execution of user-provided code

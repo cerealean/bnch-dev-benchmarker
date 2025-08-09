@@ -14,7 +14,7 @@ describe('CodeValidator', () => {
       expect(() => validator.validateCode('const x = 1 + 1;')).not.toThrow();
       expect(() => validator.validateCode('Math.random()')).not.toThrow();
       expect(() =>
-        validator.validateCode("console.log('hello')")
+        validator.validateCode("return 'hello world';")
       ).not.toThrow();
     });
 
@@ -465,6 +465,70 @@ eval('end')`;
           {
             code: 'el.innerHTML = x',
             expectedCode: SecurityErrorCode.INNERHTML_ASSIGNMENT,
+          },
+          {
+            code: 'history.pushState()',
+            expectedCode: SecurityErrorCode.HISTORY_USAGE,
+          },
+          {
+            code: 'navigator.userAgent',
+            expectedCode: SecurityErrorCode.NAVIGATOR_USAGE,
+          },
+          {
+            code: 'import("module")',
+            expectedCode: SecurityErrorCode.IMPORT_USAGE,
+          },
+          {
+            code: 'require("fs")',
+            expectedCode: SecurityErrorCode.REQUIRE_USAGE,
+          },
+          {
+            code: 'global.test',
+            expectedCode: SecurityErrorCode.GLOBAL_ACCESS,
+          },
+          {
+            code: 'window.location',
+            expectedCode: SecurityErrorCode.WINDOW_ACCESS,
+          },
+          {
+            code: 'document.body',
+            expectedCode: SecurityErrorCode.DOCUMENT_ACCESS,
+          },
+          {
+            code: 'location.href',
+            expectedCode: SecurityErrorCode.LOCATION_ACCESS,
+          },
+          {
+            code: 'console.log("test")',
+            expectedCode: SecurityErrorCode.CONSOLE_USAGE,
+          },
+          {
+            code: 'debugger;',
+            expectedCode: SecurityErrorCode.DEBUGGER_USAGE,
+          },
+          {
+            code: 'with(obj) { }',
+            expectedCode: SecurityErrorCode.WITH_STATEMENT,
+          },
+          {
+            code: 'delete obj.prototype',
+            expectedCode: SecurityErrorCode.DELETE_OPERATOR,
+          },
+          {
+            code: 'obj.__proto__ = null',
+            expectedCode: SecurityErrorCode.PROTOTYPE_POLLUTION,
+          },
+          {
+            code: 'Buffer.from("test")',
+            expectedCode: SecurityErrorCode.BUFFER_USAGE,
+          },
+          {
+            code: 'fs.readFile("test")',
+            expectedCode: SecurityErrorCode.FILESYSTEM_USAGE,
+          },
+          {
+            code: 'exec("ls")',
+            expectedCode: SecurityErrorCode.CHILD_PROCESS_USAGE,
           },
         ];
 
