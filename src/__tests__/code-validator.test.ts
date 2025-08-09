@@ -33,9 +33,9 @@ describe('CodeValidator', () => {
     it.each([123, null, undefined])(
       'should reject non-string input - %s',
       (input) => {
-        expect(() => validator.validateCode(input as any)).toThrow(
-          'Code must be a string'
-        );
+        expect(() =>
+          validator.validateCode(input as unknown as string)
+        ).toThrow('Code must be a string');
       }
     );
 

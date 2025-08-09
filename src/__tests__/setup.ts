@@ -29,17 +29,17 @@ export { originalConsole };
 
 // Helper function for conditional console logging
 export const testConsole = {
-  log: (...args: any[]) => {
+  log: (...args: []) => {
     if (ENABLE_CONSOLE_FOR_ACCEPTANCE_TESTS) {
       originalConsole.log(...args);
     }
   },
-  warn: (...args: any[]) => {
+  warn: (...args: []) => {
     if (ENABLE_CONSOLE_FOR_ACCEPTANCE_TESTS) {
       originalConsole.warn(...args);
     }
   },
-  error: (...args: any[]) => {
+  error: (...args: []) => {
     originalConsole.error(...args); // Always show errors
   },
 };

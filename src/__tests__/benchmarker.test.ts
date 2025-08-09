@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach, bench } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { Benchmarker } from '../benchmarker.js';
 
 describe('Benchmarker', () => {
@@ -19,7 +19,7 @@ describe('Benchmarker', () => {
   const runBenchmarker = async (
     testFunc: (benchmarker: Benchmarker) => void | Promise<void>,
     config?: Partial<import('../types.js').BenchmarkConfig>,
-    securityConfig?: any
+    securityConfig?: { [key: string]: unknown }
   ) => {
     const benchmarker =
       config || securityConfig

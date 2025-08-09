@@ -50,7 +50,8 @@ export class CodeValidator {
           `Found at line ${lineNumber}, column ${columnNumber}: "${earliestMatch[0].trim()}"\n` +
           `Please remove or replace this code to ensure safe execution.`
       );
-      (error as any).code = earliestPattern.code;
+      (error as Error & { code?: SecurityErrorCode }).code =
+        earliestPattern.code;
       throw error;
     }
   }

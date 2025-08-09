@@ -21,7 +21,7 @@
     "test:coverage": "npm run build && vitest --coverage",
     "test:verbose": "npm run build && cross-env VITEST_VERBOSE=true vitest run",
     "lint": "eslint src --ext .ts,.tsx",
-    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "lint:fix": "eslint src --fix --ext .ts,.tsx",
     "format": "prettier --write \"src/**/*.{ts,js}\" \"*.{ts,js,json,md}\"",
     "format:check": "prettier --check \"src/**/*.{ts,js}\" \"*.{ts,js,json,md}\"",
     "typecheck": "tsc --noEmit",
