@@ -177,30 +177,6 @@ describe('TimeDuration', () => {
     });
   });
 
-  describe('JSON serialization', () => {
-    it('should serialize to milliseconds', () => {
-      const duration = TimeDuration.fromSeconds(1.5);
-      expect(duration.toJSON()).toBe(1500);
-    });
-
-    it('should deserialize from milliseconds', () => {
-      const duration = TimeDuration.fromJSON(1500);
-      expect(duration.seconds).toBe(1.5);
-      expect(duration.milliseconds).toBe(1500);
-    });
-
-    it('should round-trip through JSON', () => {
-      const original = TimeDuration.fromMicroseconds(12345.67);
-      const serialized = original.toJSON();
-      const deserialized = TimeDuration.fromJSON(serialized);
-
-      // Should be very close, allowing for floating point precision
-      expect(
-        Math.abs(deserialized.microseconds - original.microseconds)
-      ).toBeLessThan(0.001);
-    });
-  });
-
   describe('edge cases', () => {
     it('should handle zero duration', () => {
       const duration = TimeDuration.fromSeconds(0);

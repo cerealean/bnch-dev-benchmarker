@@ -1,3 +1,14 @@
+interface TimeDurationToStringOptions {
+  units?:
+    | 'seconds'
+    | 'milliseconds'
+    | 'microseconds'
+    | 'nanoseconds'
+    | 'picoseconds'
+    | 'femtoseconds';
+  decimalPlaces?: number;
+}
+
 /**
  * A class for representing time durations with multiple unit conversions
  */
@@ -154,35 +165,61 @@ export class TimeDuration {
   /**
    * Convert to a human-readable string with the most appropriate unit
    */
-  toString(): string {
-    const abs = Math.abs(this._nanoseconds);
 
-    if (abs >= 1_000_000_000) {
-      return `${this.seconds.toFixed(3)}s`;
-    } else if (abs >= 1_000_000) {
-      return `${this.milliseconds.toFixed(3)}ms`;
-    } else if (abs >= 1_000) {
-      return `${this.microseconds.toFixed(3)}μs`;
-    } else if (abs >= 1) {
-      return `${this.nanoseconds.toFixed(3)}ns`;
-    } else if (abs >= 0.001) {
-      return `${this.picoseconds.toFixed(3)}ps`;
-    } else {
-      return `${this.femtoseconds.toFixed(3)}fs`;
+  toString(
+    options: TimeDurationToStringOptions = { decimalPlaces: 3 }
+  ): string {
+    if (options.units) {
+      switch (options.units) {
+        case 'seconds':
+          return `${this.seconds.toFixed(options.decimalPlaces)}s`;
+        case 'milliseconds':
+          return `${this.milliseconds.toFixed(options.decimalPlaces)}ms`;
+        case 'microseconds':
+          return `${this.microseconds.toFixed(options.decimalPlaces)}μs`;
+        case 'nanoseconds':
+          return `${this.nanoseconds.toFixed(options.decimalPlaces)}ns`;
+        case 'picoseconds':
+          return `${this.picoseconds.toFixed(options.decimalPlaces)}ps`;
+        case 'femtoseconds':
+          return `${this.femtoseconds.toFixed(options.decimalPlaces)}fs`;
+      }
+    }
+
+    const relevantUnit = this.getRelevantUnitAbbr();
+    switch (relevantUnit) {
+      case 's':
+        return `${this.seconds.toFixed(options.decimalPlaces)}${relevantUnit}`;
+      case 'ms':
+        return `${this.milliseconds.toFixed(
+          options.decimalPlaces
+        )}${relevantUnit}`;
+      case 'μs':
+        return `${this.microseconds.toFixed(
+          options.decimalPlaces
+        )}${relevantUnit}`;
+      case 'ns':
+        return `${this.nanoseconds.toFixed(
+          options.decimalPlaces
+        )}${relevantUnit}`;
+      case 'ps':
+        return `${this.picoseconds.toFixed(
+          options.decimalPlaces
+        )}${relevantUnit}`;
+      default:
+        return `${this.femtoseconds.toFixed(
+          options.decimalPlaces
+        )}${relevantUnit}`;
     }
   }
 
-  /**
-   * Convert to JSON representation (preserves as milliseconds for compatibility)
-   */
-  toJSON(): number {
-    return this.milliseconds;
-  }
-
-  /**
-   * Create from a JSON representation
-   */
-  static fromJSON(milliseconds: number): TimeDuration {
-    return TimeDuration.fromMilliseconds(milliseconds);
+  private getRelevantUnitAbbr() {
+    const abs = Math.abs(this._nanoseconds);
+    if (abs >= 1_000_000_000) return 's';
+    if (abs >= 1_000_000) return 'ms';
+    if (abs >= 1_000) return 'μs';
+    if (abs >= 1) return 'ns';
+    if (abs >= 0.001) return 'ps';
+    return 'fs';
   }
 }
