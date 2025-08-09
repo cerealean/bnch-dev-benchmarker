@@ -33,7 +33,7 @@ The GitHub Actions workflow includes:
 
 ### **Test Job**
 
-- Runs on Node.js versions 18.x, 20.x, and 22.x
+- Runs on Node.js versions 22.x
 - Installs dependencies
 - Runs linter (`npm run lint`)
 - Runs type checking (`npm run type-check`)
