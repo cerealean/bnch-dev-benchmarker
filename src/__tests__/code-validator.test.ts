@@ -441,24 +441,92 @@ eval('end')`;
             expectedCode: SecurityErrorCode.FETCH_USAGE,
           },
           {
+            code: 'XMLHttpRequest()',
+            expectedCode: SecurityErrorCode.XMLHTTPREQUEST_USAGE,
+          },
+          {
             code: 'new XMLHttpRequest()',
             expectedCode: SecurityErrorCode.XMLHTTPREQUEST_CONSTRUCTOR,
+          },
+          {
+            code: `WebSocket("ws://${faker.internet.domainName()}")`,
+            expectedCode: SecurityErrorCode.WEBSOCKET_USAGE,
           },
           {
             code: `new WebSocket("ws://${faker.internet.domainName()}")`,
             expectedCode: SecurityErrorCode.WEBSOCKET_CONSTRUCTOR,
           },
           {
+            code: `EventSource("${faker.internet.url()}")`,
+            expectedCode: SecurityErrorCode.EVENTSOURCE_USAGE,
+          },
+          {
+            code: `new EventSource("${faker.internet.url()}")`,
+            expectedCode: SecurityErrorCode.EVENTSOURCE_CONSTRUCTOR,
+          },
+          {
+            code: `Worker("${faker.system.filePath()}")`,
+            expectedCode: SecurityErrorCode.WORKER_USAGE,
+          },
+          {
             code: `new Worker("${faker.system.filePath()}")`,
             expectedCode: SecurityErrorCode.WORKER_CONSTRUCTOR,
+          },
+          {
+            code: `SharedWorker("${faker.system.filePath()}")`,
+            expectedCode: SecurityErrorCode.SHAREDWORKER_USAGE,
+          },
+          {
+            code: `new SharedWorker("${faker.system.filePath()}")`,
+            expectedCode: SecurityErrorCode.SHAREDWORKER_CONSTRUCTOR,
+          },
+          {
+            code: 'document.createElement("script")',
+            expectedCode: SecurityErrorCode.SCRIPT_ELEMENT_CREATION,
+          },
+          {
+            code: 'el.innerHTML = x',
+            expectedCode: SecurityErrorCode.INNERHTML_ASSIGNMENT,
+          },
+          {
+            code: 'el.outerHTML = x',
+            expectedCode: SecurityErrorCode.OUTERHTML_ASSIGNMENT,
+          },
+          {
+            code: 'setImmediate(() => {})',
+            expectedCode: SecurityErrorCode.SETIMMEDIATE_USAGE,
+          },
+          {
+            code: 'process.nextTick(() => {})',
+            expectedCode: SecurityErrorCode.PROCESS_NEXTTICK_USAGE,
+          },
+          {
+            code: 'crypto.subtle.encrypt()',
+            expectedCode: SecurityErrorCode.CRYPTO_SUBTLE_USAGE,
           },
           {
             code: 'localStorage.test',
             expectedCode: SecurityErrorCode.LOCALSTORAGE_USAGE,
           },
           {
+            code: `sessionStorage.getItem("${faker.lorem.word()}")`,
+            expectedCode: SecurityErrorCode.SESSIONSTORAGE_USAGE,
+          },
+          {
+            code: 'indexedDB.open("db")',
+            expectedCode: SecurityErrorCode.INDEXEDDB_USAGE,
+          },
+          {
             code: `alert("${faker.lorem.sentence()}")`,
             expectedCode: SecurityErrorCode.ALERT_USAGE,
+          },
+          {
+            code: `confirm("${faker.lorem.sentence()}")`,
+            expectedCode: SecurityErrorCode.CONFIRM_USAGE,
+          },
+          {
+            code: `prompt("${faker.lorem.sentence()}")`,
+            expectedCode: SecurityErrorCode.PROMPT_USAGE,
           },
           {
             code: `requestAnimationFrame(${faker.lorem.word()})`,
@@ -467,10 +535,6 @@ eval('end')`;
           {
             code: 'importScripts("s")',
             expectedCode: SecurityErrorCode.IMPORTSCRIPTS_USAGE,
-          },
-          {
-            code: 'el.innerHTML = x',
-            expectedCode: SecurityErrorCode.INNERHTML_ASSIGNMENT,
           },
           {
             code: 'history.pushState()',
@@ -489,10 +553,8 @@ eval('end')`;
             expectedCode: SecurityErrorCode.REQUIRE_USAGE,
           },
           {
-            code: `require("${faker.string.alpha({
-              length: { min: 5, max: 15 },
-            })}")`,
-            expectedCode: SecurityErrorCode.REQUIRE_USAGE,
+            code: 'include("file.js")',
+            expectedCode: SecurityErrorCode.INCLUDE_USAGE,
           },
           {
             code: 'global.test',
@@ -527,7 +589,23 @@ eval('end')`;
             expectedCode: SecurityErrorCode.DELETE_OPERATOR,
           },
           {
+            code: 'delete obj.constructor',
+            expectedCode: SecurityErrorCode.DELETE_OPERATOR,
+          },
+          {
+            code: 'delete obj.__proto__',
+            expectedCode: SecurityErrorCode.DELETE_OPERATOR,
+          },
+          {
             code: 'obj.__proto__ = null',
+            expectedCode: SecurityErrorCode.PROTOTYPE_POLLUTION,
+          },
+          {
+            code: 'obj.prototype = null',
+            expectedCode: SecurityErrorCode.PROTOTYPE_POLLUTION,
+          },
+          {
+            code: 'obj.constructor = null',
             expectedCode: SecurityErrorCode.PROTOTYPE_POLLUTION,
           },
           {
@@ -539,7 +617,23 @@ eval('end')`;
             expectedCode: SecurityErrorCode.FILESYSTEM_USAGE,
           },
           {
+            code: 'require("fs")',
+            expectedCode: SecurityErrorCode.REQUIRE_USAGE,
+          },
+          {
+            code: 'require("path")',
+            expectedCode: SecurityErrorCode.REQUIRE_USAGE,
+          },
+          {
+            code: 'require("child_process")',
+            expectedCode: SecurityErrorCode.REQUIRE_USAGE,
+          },
+          {
             code: `exec("${faker.lorem.word()}")`,
+            expectedCode: SecurityErrorCode.CHILD_PROCESS_USAGE,
+          },
+          {
+            code: `spawn("${faker.lorem.word()}")`,
             expectedCode: SecurityErrorCode.CHILD_PROCESS_USAGE,
           },
         ];
