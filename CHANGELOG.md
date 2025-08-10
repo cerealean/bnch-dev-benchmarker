@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/cerealean/bnch-dev-benchmarker/compare/v2.0.0...v2.0.1) (2025-08-10)
+
+
+### Performance Improvements
+
+* update ci-cd steps to run concurrently ([90dfd4b](https://github.com/cerealean/bnch-dev-benchmarker/commit/90dfd4bc32cf60a885e15e7628f3309aac1ee172))
+
 # [2.0.0](https://github.com/cerealean/bnch-dev-benchmarker/compare/v1.0.1...v2.0.0) (2025-08-09)
 
 
