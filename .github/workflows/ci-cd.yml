@@ -30,20 +30,8 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build library
-        run: npm run build
-
-      - name: Run linter and type check in parallel
-        run: |
-          npm run lint &
-          npm run type-check &
-          wait
-
-      - name: Run tests in parallel
-        run: |
-          npm run test:unit &
-          npm run test:acceptance &
-          wait
+      - name: Run CI Checks
+        run: npm run ci:check
 
   build:
     name: Build

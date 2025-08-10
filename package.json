@@ -12,7 +12,7 @@
   "scripts": {
     "build": "rollup -c",
     "preci:check": "npm run build",
-    "ci:check": "npm run lint && npm run type-check && npm run test",
+    "ci:check": "npm run lint && npm run type-check && npm run test:all",
     "dev": "rollup -c -w",
     "demo": "npm run build && node examples/browser-demo.js",
     "demo:simple": "npm run build && node examples/time-duration-demo.js",
