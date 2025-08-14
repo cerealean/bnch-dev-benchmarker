@@ -12,6 +12,10 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: read
+      checks: write
 
     strategy:
       matrix:
